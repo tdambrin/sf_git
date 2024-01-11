@@ -20,11 +20,7 @@ Python package to manipulate Snowsight worksheets
 setup(
     name="sf_git",
     setup_requires=["setuptools_scm"],
-    use_scm_version={
-        "write_to": "version.txt",
-        "root": ".",
-        "relative_to": __file__,
-    },
+    version="1.0",
     author="Thomas Dambrin",
     author_email="thomas.dambrin@gmail.com",
     description=description,

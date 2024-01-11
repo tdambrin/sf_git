@@ -32,6 +32,19 @@ $ pip install sf_git
 
 # [Check your installation]
 $ sfgit --help
+
+# [Should result in:]
+# Usage: sfgit [OPTIONS] COMMAND [ARGS]...
+# 
+# Options:
+#   --help  Show this message and exit.
+# 
+# Commands:
+#   commit  Commit Snowsight worksheets to Git repository.
+#   config  Configure sfgit for easier version control.
+#   fetch   Fetch worksheets from user Snowsight account and store them in...
+#   init    Initialize a git repository and set it as the sfgit versioning...
+#   push    Upload locally stored worksheets to Snowsight user workspace.
 ```
 
 Commands have been created to **import/export (respectively fetch/push) snowsight worksheets to/from local**.

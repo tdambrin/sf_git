@@ -6,7 +6,7 @@ from pkg_resources import DistributionNotFound, get_distribution
 try:
     __version__ = get_distribution(__name__).version
 except DistributionNotFound:
-    __version__ = "1.0"
+    __version__ = "1.1"
 
 HERE = Path(__file__).parent
 dotenv_path = HERE / "sf_git.conf"

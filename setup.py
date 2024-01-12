@@ -17,10 +17,13 @@ Python package to manipulate Snowsight worksheets
  and easily apply Git versioning on it.
 """
 
+with open("README.md", "r") as f:
+    long_description = f.read()
+
 setup(
     name="sf_git",
     setup_requires=["setuptools_scm"],
-    version="1.0",
+    version="1.1",
     author="Thomas Dambrin",
     author_email="thomas.dambrin@gmail.com",
     description=description,
@@ -40,4 +43,6 @@ setup(
     # all functions @cli.command() decorated in sf_git/cli.py
     entry_points={"console_scripts": ["sfgit = sf_git.cli:cli"]},
     scripts=[],
+    long_description=long_description,
+    long_description_content_type="text/markdown",
 )

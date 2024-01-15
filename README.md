@@ -2,6 +2,8 @@
 [![image](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:thomas.dambrin@gmail.com?subject=[GitHub]%20Snowflake%20Git%20Versioning)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+:construction: Due to an architecture change of the Snowsight API, this package is currently being adapted. More updates soon.
+
 # Snowflake Git
 
 # Worksheet Versioning
@@ -70,7 +72,7 @@ $ sfgit init <path_to_git_repo>
 
 Then, set a location to save your worksheets within this git repository:
 ```bash
-$ sfgit config --save-directory <path_to_worksheets_persistency_directory>
+$ sfgit config --save-dir <path_to_worksheets_persistency_directory>
 ```
 
 ## Authentication

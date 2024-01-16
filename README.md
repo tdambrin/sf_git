@@ -29,7 +29,7 @@ $ pyenv activate sf
 
 # [Mandatory: Pip install]
 $ pip install -U pip
-$ pip install sf_git
+$ pip install sf_git>=1.3
 
 # [Check your installation]
 $ sfgit --help

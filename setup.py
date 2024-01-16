@@ -23,7 +23,6 @@ with open("README.md", "r") as f:
 setup(
     name="sf_git",
     setup_requires=["setuptools_scm"],
-    version="1.1",
     author="Thomas Dambrin",
     author_email="thomas.dambrin@gmail.com",
     description=description,

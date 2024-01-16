@@ -98,11 +98,12 @@ def authenticate_to_snowsight(
             )
 
     # Get client ID
-    client_id_response = oauth_start_get_snowsight_client_id_in_deployment(
+    client_id_responses = oauth_start_get_snowsight_client_id_in_deployment(
         auth_context.main_app_url,
         auth_context.app_server_url,
         auth_context.account_url,
     )
+    client_id_response = client_id_responses.history[-1]
     oauth_nonce_cookie = client_id_response.headers["Set-cookie"]
     redirect_uri = client_id_response.headers["Location"]
     parsed = urlparse(redirect_uri)
@@ -220,9 +221,10 @@ def oauth_start_get_snowsight_client_id_in_deployment(
     app_server_url: str,
     account_url: str,
 ):
-    csrf = "SnowflakePS"
+    csrf = "sfgit"
+
     state_params = (
-        '{{"isSecondaryUser":false,"csrf":'
+        '{"csrf":'
         f'"{csrf}","url":"{account_url}","browserUrl":"{main_app_url}"}}'
     )
 
@@ -231,12 +233,15 @@ def oauth_start_get_snowsight_client_id_in_deployment(
         f"{parse.quote_plus(account_url)}"
         f"&state={parse.quote_plus(state_params)}"
     )
+ 
     response = requests.get(
         f"{app_server_url}/{rest_api_url}",
-        allow_redirects=False,
+        headers={'Accept': 'text/html'},
+        allow_redirects=True,
     )
 
-    if response.status_code == 302:
+ 
+    if response.status_code == 200:
         return response
 
     raise AuthenticationError(
@@ -273,7 +278,7 @@ def oauth_complete_get_auth_token_from_redirect(
     oauth_nonce_cookie,
     main_app_url: str,
 ):
-    csrf = "SnowflakePS"
+    csrf = "sfgit"
     cookie_name_value = oauth_nonce_cookie.split(";")[0].split("=")
     cookie = {cookie_name_value[0]: cookie_name_value[1]}
 

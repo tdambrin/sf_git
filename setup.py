@@ -26,6 +26,8 @@ setup(
     setup_requires=["setuptools_scm"],
     author="Thomas Dambrin",
     author_email="thomas.dambrin@gmail.com",
+    url="https://github.com/tdambrin/sf_git",
+    license="MIT",
     description=description,
     packages=find_packages(),
     install_requires=requirements,

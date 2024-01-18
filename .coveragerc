@@ -1,0 +1,4 @@
+[run]
+source = sf_git
+omit = *tests*
+disable_warnings = no-data-collected

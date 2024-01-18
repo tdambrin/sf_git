@@ -239,7 +239,6 @@ def oauth_start_get_snowsight_client_id_in_deployment(
         headers={'Accept': 'text/html'},
         allow_redirects=True,
     )
-
  
     if response.status_code == 200:
         return response

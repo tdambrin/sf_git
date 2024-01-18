@@ -2,7 +2,7 @@ import json
 from urllib import parse
 import pandas as pd
 import requests
-from typing import Optional
+from typing import Optional, List
 
 from sf_git.cache import save_worksheets_to_cache
 from sf_git.models import (
@@ -17,8 +17,8 @@ from sf_git.models import (
 def get_worksheets(
     auth_context: AuthenticationContext,
     store_to_cache: Optional[bool] = False,
-    only_folder: Optional[str]=None
-) -> list:
+    only_folder: Optional[str] = None
+) -> List[Worksheet]:
     """
     Get list of worksheets available for authenticated user
     """
@@ -85,7 +85,7 @@ def get_worksheets(
     return worksheets
 
 
-def print_worksheets(worksheets: list, n=10):
+def print_worksheets(worksheets: List[Worksheet], n=10):
     worksheets_df = pd.DataFrame([ws.to_dict() for ws in worksheets])
     print(worksheets_df.head(n))
 
@@ -178,7 +178,7 @@ def create_worksheet(
     return response_data["pid"]
 
 
-def get_folders(auth_context: AuthenticationContext) -> list:
+def get_folders(auth_context: AuthenticationContext) -> List[Folder]:
     """
     Get list of folders on authenticated user workspace
     """
@@ -229,7 +229,7 @@ def get_folders(auth_context: AuthenticationContext) -> list:
     return folders
 
 
-def print_folders(folders: list, n=10):
+def print_folders(folders: List[Folder], n=10):
     folders_df = pd.DataFrame([f.to_dict() for f in folders])
     print(folders_df.head(n))
 
@@ -277,7 +277,7 @@ def create_folder(
 
 
 def upload_to_snowsight(
-    auth_context: AuthenticationContext, worksheets: list
+    auth_context: AuthenticationContext, worksheets: List[Worksheet]
 ) -> Optional[list]:
     """
     Upload worksheets to Snowsight user workspace

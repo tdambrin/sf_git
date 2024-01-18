@@ -119,13 +119,13 @@ def api_post(
         logging.info(f"POST {base_url}/{rest_api_url} took {elapsed_time:.2f}")
 
 
-def random_unused_port():
+def random_unused_port() -> int:
     sock = socket.socket()
     sock.bind(("", 0))
     return sock.getsockname()[1]
 
 
-def start_browser(url):
+def start_browser(url: str):
     if platform.system() == "Windows":
         subprocess.Popen(
             ["cmd", "/c", "start", url.replace("&", "^&")],

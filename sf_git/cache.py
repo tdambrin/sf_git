@@ -2,14 +2,14 @@ import json
 import os
 import re
 import git
-from typing import Optional
+from typing import List, Optional
 
 from sf_git.config import WORKSHEETS_PATH, REPO_PATH
 from sf_git.models import Worksheet, WorksheetError
 from sf_git.git_utils import get_tracked_files, get_blobs_content
 
 
-def save_worksheets_to_cache(worksheets: list):
+def save_worksheets_to_cache(worksheets: List[Worksheet]):
     """
     Save worksheets to cache.
 
@@ -58,7 +58,7 @@ def save_worksheets_to_cache(worksheets: list):
 def load_worksheets_from_cache(
     branch_name: Optional[str] = None,
     only_folder: Optional[str] = None,
-) -> list:
+) -> List[Worksheet]:
     """
     Load worksheets from cache.
     """

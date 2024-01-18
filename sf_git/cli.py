@@ -432,7 +432,6 @@ def push_worksheets(
         exit(1)
 
     click.echo(f" ## Getting worksheets from cache for user {username} ##")
-    snowsight_username = auth_context.username
     worksheets = load_worksheets_from_cache(
         branch_name=branch,
         only_folder=only_folder,

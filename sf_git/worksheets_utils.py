@@ -61,7 +61,8 @@ def get_worksheets(
 
     worksheets = []
     for worksheet in entities:
-        if only_folder is not None and worksheet["info"]["folderName"] != only_folder:
+        if only_folder is not None \
+                and worksheet["info"]["folderName"] != only_folder:
             continue
         if worksheet["entityType"] == "query":
             current_ws = Worksheet(

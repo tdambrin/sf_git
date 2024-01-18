@@ -233,13 +233,13 @@ def oauth_start_get_snowsight_client_id_in_deployment(
         f"{parse.quote_plus(account_url)}"
         f"&state={parse.quote_plus(state_params)}"
     )
- 
+
     response = requests.get(
         f"{app_server_url}/{rest_api_url}",
         headers={'Accept': 'text/html'},
         allow_redirects=True,
     )
- 
+
     if response.status_code == 200:
         return response
 

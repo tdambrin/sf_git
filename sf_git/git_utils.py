@@ -33,7 +33,7 @@ def get_tracked_files(
         branch = repo.active_branch
 
     # get to folder by folder names
-    repo_objects = [obj for obj in branch.commit.tree.traverse()]
+    repo_objects = branch.commit.tree.traverse()
     try:
         folder_tree = next(
             obj for obj in repo_objects if obj.abspath == str(folder)
@@ -46,7 +46,7 @@ def get_tracked_files(
         )
 
     # get files
-    tracked_files = [obj for obj in folder_tree.traverse()]
+    tracked_files = folder_tree.traverse()
     return tracked_files
 
 

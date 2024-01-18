@@ -302,17 +302,9 @@ def fetch_worksheets(
     help="Branch to commit to. Default is current.",
 )
 @click.option("--message", "-m", type=str, help="Commit message")
-@click.option(
-    "--username",
-    "-u",
-    type=str,
-    help="""User for which worksheets will be committed.
-        All users worksheets will be committed if not provided""",
-)
 def commit(
     branch: str,
     message: str,
-    username: str,
 ):
     """
     Commit Snowsight worksheets to Git repository.

@@ -4,12 +4,17 @@ from pathlib import Path
 import datetime
 from zoneinfo import ZoneInfo
 from git import Repo, Actor
+from dotenv import dotenv_values
+from unittest.mock import patch
 
+from sf_git.config import Config
+
+PACKAGE_ROOT = Path(__file__).parent.parent
+TEST_CONF = dotenv_values(PACKAGE_ROOT / "sf_git.test.conf")
 
 TESTING_FOLDER = Path(__file__).parent
-TMP_PATH = Path('/tmp')
-REPO_ROOT_PATH = TMP_PATH / "sf_git"
-REPO_DATA_PATH = TMP_PATH / "sf_git" / "test_data"
+REPO_ROOT_PATH = Path(TEST_CONF['SNOWFLAKE_VERSIONING_REPO'])
+REPO_DATA_PATH = Path(TEST_CONF['WORKSHEETS_PATH'])
 
 
 @pytest.fixture(scope='session', autouse=True)
@@ -56,3 +61,19 @@ def repo() -> Repo:
     )
 
     return repo
+
+
+@pytest.fixture(scope="session", autouse=True)
+def mock_config():
+    def side_effect_test_config():
+        global_config = Config(
+            repo_path=REPO_ROOT_PATH,
+            worksheets_path=REPO_DATA_PATH,
+            sf_account_id=TEST_CONF['SF_ACCOUNT_ID'],
+            sf_login_name=TEST_CONF['SF_LOGIN_NAME'],
+        )
+
+        return global_config
+
+    with patch("sf_git.config.global_config", side_effect_test_config()) as mocked:
+        yield mocked

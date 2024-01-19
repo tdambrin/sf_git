@@ -4,7 +4,7 @@ import re
 import git
 from typing import List, Optional
 
-from sf_git.config import WORKSHEETS_PATH, REPO_PATH
+from sf_git.config import global_config
 from sf_git.models import Worksheet, WorksheetError
 from sf_git.git_utils import get_tracked_files, get_blobs_content
 
@@ -18,9 +18,9 @@ def save_worksheets_to_cache(worksheets: List[Worksheet]):
         - <ws_name>.sql or <ws_name>.py (worksheet content)
     """
 
-    print(f"[Worksheets] Saving to {WORKSHEETS_PATH}")
-    if not os.path.exists(WORKSHEETS_PATH):
-        os.makedirs(WORKSHEETS_PATH, exist_ok=True)
+    print(f"[Worksheets] Saving to {global_config.worksheets_path}")
+    if not os.path.exists(global_config.worksheets_path):
+        os.makedirs(global_config.worksheets_path, exist_ok=True)
 
     for ws in worksheets:
         ws_name = re.sub(r"[ :/]", "_", ws.name)
@@ -33,13 +33,13 @@ def save_worksheets_to_cache(worksheets: List[Worksheet]):
             )
 
             # create folder if not exists
-            if not os.path.exists(WORKSHEETS_PATH / folder_name):
-                os.mkdir(WORKSHEETS_PATH / folder_name)
+            if not os.path.exists(global_config.worksheets_path / folder_name):
+                os.mkdir(global_config.worksheets_path / folder_name)
         else:
             file_name = f"{ws_name}.{extension}"
             worksheet_metadata_file_name = f".{ws_name}_metadata.json"
 
-        with open(WORKSHEETS_PATH / file_name, "w") as f:
+        with open(global_config.worksheets_path / file_name, "w") as f:
             f.write(ws.content)
         ws_metadata = {
             "name": ws.name,
@@ -49,7 +49,7 @@ def save_worksheets_to_cache(worksheets: List[Worksheet]):
             "content_type": ws.content_type,
         }
         with open(
-            WORKSHEETS_PATH / worksheet_metadata_file_name, "w"
+            global_config.worksheets_path / worksheet_metadata_file_name, "w"
         ) as f:
             f.write(json.dumps(ws_metadata))
     print("[Worksheets] Saved")
@@ -63,16 +63,17 @@ def load_worksheets_from_cache(
     Load worksheets from cache.
     """
 
-    print(f"[Worksheets] Loading from {WORKSHEETS_PATH}")
-    if not os.path.exists(WORKSHEETS_PATH):
+    print(f"[Worksheets] Loading from {global_config.worksheets_path}")
+    if not os.path.exists(global_config.worksheets_path):
         raise WorksheetError(
             "Could not retrieve worksheets from cache. "
-            f"The folder {WORKSHEETS_PATH} does not exist"
+            f"The folder {global_config.worksheets_path} does not exist"
         )
 
     # get file content from git utils
-    repo = git.Repo(REPO_PATH)
-    tracked_files = get_tracked_files(repo, WORKSHEETS_PATH, branch_name)
+    repo = git.Repo(global_config.repo_path)
+    # import ipdb; ipdb.set_trace()
+    tracked_files = [f for f in get_tracked_files(repo, global_config.worksheets_path, branch_name)]
 
     # filter on worksheet files
     ws_metadata_files = [
@@ -106,6 +107,7 @@ def load_worksheets_from_cache(
                 f for f in tracked_files if f.name == content_filename
             )
         except StopIteration:
+            print(f'{content_filename} not found in {[f.name for f in tracked_files]}')
             pass  # FixMe
         ws_content_as_dict = get_blobs_content([content_blob])
         ws_content = list(ws_content_as_dict.values())[0]

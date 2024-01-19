@@ -7,13 +7,7 @@ import click
 from click import UsageError
 
 from sf_git.cache import load_worksheets_from_cache
-from sf_git.config import (
-    REPO_PATH,
-    WORKSHEETS_PATH,
-    SF_ACCOUNT_ID,
-    SF_LOGIN_NAME,
-    SF_PWD,
-)
+from sf_git.config import global_config
 from sf_git.snowsight_auth import authenticate_to_snowsight
 from sf_git.models import AuthenticationMode
 from sf_git.worksheets_utils import get_worksheets as sf_get_worksheets
@@ -152,7 +146,7 @@ def config_repo(
     if save_dir:
         save_dir = Path(save_dir).absolute()
         # get git_repo
-        git_repo = Path(git_repo).absolute() if git_repo else REPO_PATH
+        git_repo = Path(git_repo).absolute() if git_repo else global_config.repo_path
         if (
             git_repo not in save_dir.parents
             and git_repo != save_dir
@@ -239,11 +233,11 @@ def fetch_worksheets(
 
     # Get auth parameters
     click.echo(" ## Authenticating to Snowsight ##")
-    username = username or SF_LOGIN_NAME
+    username = username or global_config.sf_login_name
     if not username:
         raise Exception("No username to authenticate with.")
 
-    account_id = account_id or SF_ACCOUNT_ID
+    account_id = account_id or global_config.sf_account_id
     if not account_id:
         raise Exception("No account to authenticate with.")
 
@@ -253,7 +247,7 @@ def fetch_worksheets(
             password = None
         elif auth_mode == "PWD":
             auth_mode = AuthenticationMode.PWD
-            password = password or SF_PWD
+            password = password or global_config.sf_pwd
             if not password:
                 raise UsageError(
                     "No password provided for PWD authentication mode."
@@ -263,7 +257,7 @@ def fetch_worksheets(
             raise UsageError(f"{auth_mode} is not supported.")
     else:  # default
         auth_mode = AuthenticationMode.PWD
-        password = password or SF_PWD
+        password = password or global_config.sf_pwd
         if not password:
             raise UsageError(
                 "No password provided for PWD authentication mode."
@@ -311,9 +305,9 @@ def commit(
     """
     # Get git repo
     try:
-        repo = git.Repo(REPO_PATH)
+        repo = git.Repo(global_config.repo_path)
     except git.InvalidGitRepositoryError:
-        raise Exception(f"Could not find Git Repository here : {REPO_PATH}")
+        raise Exception(f"Could not find Git Repository here : {global_config.repo_path}")
 
     # Get git branch
     if branch:
@@ -329,7 +323,7 @@ def commit(
         branch = repo.active_branch
 
     # Add worksheets to staged files
-    repo.index.add(WORKSHEETS_PATH)
+    repo.index.add(global_config.worksheets_path)
 
     # Commit
     if message:
@@ -383,10 +377,10 @@ def push_worksheets(
 
     # Get auth parameters
     click.echo(" ## Authenticating to Snowsight ##")
-    username = username or SF_LOGIN_NAME
+    username = username or global_config.sf_login_name
     if not username:
         raise Exception("No username to authenticate with.")
-    account_id = account_id or SF_ACCOUNT_ID
+    account_id = account_id or global_config.sf_account_id
     if not account_id:
         raise Exception("No account to authenticate with.")
 
@@ -396,7 +390,7 @@ def push_worksheets(
             password = None
         elif auth_mode == "PWD":
             auth_mode = AuthenticationMode.PWD
-            password = password or SF_PWD
+            password = password or global_config.sf_pwd
             if not password:
                 raise UsageError(
                     "No password provided for PWD authentication mode."
@@ -406,7 +400,7 @@ def push_worksheets(
             raise UsageError(f"{auth_mode} is not supported.")
     else:  # default
         auth_mode = AuthenticationMode.PWD
-        password = password or SF_PWD
+        password = password or global_config.sf_pwd
         if not password:
             raise UsageError(
                 "No password provided for PWD authentication mode."

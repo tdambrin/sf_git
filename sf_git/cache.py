@@ -18,7 +18,7 @@ def save_worksheets_to_cache(worksheets: List[Worksheet]):
         - .<ws_name>_metadata.json (worksheet info)
         - <ws_name>.sql or <ws_name>.py (worksheet content)
 
-    :param worksheets: list of worksheets to save.
+    :param worksheets: list of worksheets to save
     """
 
     print(f"[Worksheets] Saving to {config.GLOBAL_CONFIG.worksheets_path}")

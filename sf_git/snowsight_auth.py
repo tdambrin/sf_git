@@ -18,7 +18,7 @@ from sf_git.models import (
     AuthenticationMode,
     AuthenticationError,
 )
-from sf_git.config import GLOBAL_CONFIG
+import sf_git.config as config
 
 urllib3.disable_warnings()
 
@@ -31,7 +31,7 @@ def authenticate_to_snowsight(
 ) -> AuthenticationContext:
 
     auth_context = AuthenticationContext()
-    auth_context.main_app_url = GLOBAL_CONFIG.sf_main_app_url
+    auth_context.main_app_url = config.GLOBAL_CONFIG.sf_main_app_url
     auth_context.account_name = account_name
     auth_context.login_name = login_name
 
@@ -178,7 +178,7 @@ def authenticate_to_snowsight(
 
 
 def get_account_app_endpoint(account_name: str):
-    main_app_url = GLOBAL_CONFIG.sf_main_app_url
+    main_app_url = config.GLOBAL_CONFIG.sf_main_app_url
     response = api_post(
         main_app_url,
         f"v0/validate-snowflake-url?url={account_name}",

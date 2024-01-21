@@ -5,16 +5,21 @@ import datetime
 from zoneinfo import ZoneInfo
 from git import Repo, Actor
 from dotenv import dotenv_values
-from unittest.mock import patch
 
 from sf_git.config import Config
 
 PACKAGE_ROOT = Path(__file__).parent.parent
 TEST_CONF = dotenv_values(PACKAGE_ROOT / "sf_git.test.conf")
 
-TESTING_FOLDER = Path(__file__).parent
-REPO_ROOT_PATH = Path(TEST_CONF['SNOWFLAKE_VERSIONING_REPO'])
-REPO_DATA_PATH = Path(TEST_CONF['WORKSHEETS_PATH'])
+TESTING_FOLDER = Path(__file__).parent.absolute()
+REPO_ROOT_PATH = Path(TEST_CONF['SNOWFLAKE_VERSIONING_REPO']).absolute()
+REPO_DATA_PATH = Path(TEST_CONF['WORKSHEETS_PATH']).absolute()
+
+
+@pytest.fixture(autouse=True)
+def mock_dotenv_path(monkeypatch):
+    import sf_git
+    monkeypatch.setattr(sf_git, "DOTENV_PATH", REPO_ROOT_PATH / 'sf_git.test.conf')
 
 
 @pytest.fixture(scope='session', autouse=True)
@@ -38,20 +43,19 @@ def setup_and_teardown():
     shutil.rmtree(REPO_ROOT_PATH)
 
 
-@pytest.fixture(scope="session", autouse=True)
-def mock_config():
-    def side_effect_test_config():
-        GLOBAL_CONFIG = Config(
-            repo_path=REPO_ROOT_PATH,
-            worksheets_path=REPO_DATA_PATH,
-            sf_account_id=TEST_CONF['SF_ACCOUNT_ID'],
-            sf_login_name=TEST_CONF['SF_LOGIN_NAME'],
-        )
+@pytest.fixture(autouse=True, name='test_config')
+def mock_config(monkeypatch):
+    import sf_git.config as config
 
-        return GLOBAL_CONFIG
+    global_config = Config(
+        repo_path=REPO_ROOT_PATH,
+        worksheets_path=REPO_DATA_PATH,
+        sf_account_id=TEST_CONF['SF_ACCOUNT_ID'],
+        sf_login_name=TEST_CONF['SF_LOGIN_NAME'],
+    )
+    monkeypatch.setattr(config, "GLOBAL_CONFIG", global_config)
 
-    with patch("sf_git.config.GLOBAL_CONFIG", side_effect_test_config()) as mocked:
-        yield mocked
+    return global_config
 
 
 @pytest.fixture(scope="session", name="repo")
@@ -68,7 +72,7 @@ def repo() -> Repo:
     repo = Repo.init(REPO_ROOT_PATH)
 
     # Add some commits
-    repo.index.add(["test_data/*"])
+    repo.index.add([REPO_DATA_PATH])
     repo.index.commit(
         "Initial skeleton",
         author=author,
@@ -78,9 +82,3 @@ def repo() -> Repo:
     )
 
     return repo
-
-
-@pytest.fixture(autouse=True)
-def mock_env(monkeypatch):
-    import sf_git
-    monkeypatch.setattr(sf_git, "DOTENV_PATH", REPO_ROOT_PATH / 'sf_git.test.conf')

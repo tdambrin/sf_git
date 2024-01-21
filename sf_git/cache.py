@@ -5,7 +5,7 @@ import git
 from pathlib import Path
 from typing import List, Optional, Union
 
-from sf_git.config import GLOBAL_CONFIG
+import sf_git.config as config
 from sf_git.models import Worksheet, WorksheetError
 from sf_git.git_utils import get_tracked_files, get_blobs_content
 
@@ -21,9 +21,9 @@ def save_worksheets_to_cache(worksheets: List[Worksheet]):
     :param worksheets: list of worksheets to save.
     """
 
-    print(f"[Worksheets] Saving to {GLOBAL_CONFIG.worksheets_path}")
-    if not os.path.exists(GLOBAL_CONFIG.worksheets_path):
-        os.makedirs(GLOBAL_CONFIG.worksheets_path, exist_ok=True)
+    print(f"[Worksheets] Saving to {config.GLOBAL_CONFIG.worksheets_path}")
+    if not os.path.exists(config.GLOBAL_CONFIG.worksheets_path):
+        os.makedirs(config.GLOBAL_CONFIG.worksheets_path, exist_ok=True)
 
     for ws in worksheets:
         ws_name = re.sub(r"[ :/]", "_", ws.name)
@@ -36,13 +36,13 @@ def save_worksheets_to_cache(worksheets: List[Worksheet]):
             )
 
             # create folder if not exists
-            if not os.path.exists(GLOBAL_CONFIG.worksheets_path / folder_name):
-                os.mkdir(GLOBAL_CONFIG.worksheets_path / folder_name)
+            if not os.path.exists(config.GLOBAL_CONFIG.worksheets_path / folder_name):
+                os.mkdir(config.GLOBAL_CONFIG.worksheets_path / folder_name)
         else:
             file_name = f"{ws_name}.{extension}"
             worksheet_metadata_file_name = f".{ws_name}_metadata.json"
 
-        with open(GLOBAL_CONFIG.worksheets_path / file_name, "w") as f:
+        with open(config.GLOBAL_CONFIG.worksheets_path / file_name, "w") as f:
             f.write(ws.content)
         ws_metadata = {
             "name": ws.name,
@@ -52,7 +52,7 @@ def save_worksheets_to_cache(worksheets: List[Worksheet]):
             "content_type": ws.content_type,
         }
         with open(
-            GLOBAL_CONFIG.worksheets_path / worksheet_metadata_file_name, "w"
+            config.GLOBAL_CONFIG.worksheets_path / worksheet_metadata_file_name, "w"
         ) as f:
             f.write(json.dumps(ws_metadata))
     print("[Worksheets] Saved")
@@ -73,14 +73,14 @@ def load_worksheets_from_cache(
     :return: list of tracked worksheet objects
     """
 
-    print(f"[Worksheets] Loading from {GLOBAL_CONFIG.worksheets_path}")
-    if not os.path.exists(GLOBAL_CONFIG.worksheets_path):
+    print(f"[Worksheets] Loading from {config.GLOBAL_CONFIG.worksheets_path}")
+    if not os.path.exists(config.GLOBAL_CONFIG.worksheets_path):
         raise WorksheetError(
             "Could not retrieve worksheets from cache. "
-            f"The folder {GLOBAL_CONFIG.worksheets_path} does not exist"
+            f"The folder {config.GLOBAL_CONFIG.worksheets_path} does not exist"
         )
 
-    tracked_files = [f for f in get_tracked_files(repo, GLOBAL_CONFIG.worksheets_path, branch_name)]
+    tracked_files = [f for f in get_tracked_files(repo, config.GLOBAL_CONFIG.worksheets_path, branch_name)]
 
     # filter on worksheet files
     ws_metadata_files = [

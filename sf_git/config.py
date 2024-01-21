@@ -23,6 +23,8 @@ class Config:
                 self.repo_path = WindowsPath(self.repo_path)
             if self.worksheets_path:
                 self.worksheets_path = WindowsPath(self.worksheets_path)
+        self.repo_path = self.repo_path.absolute()
+        self.worksheets_path = self.worksheets_path.absolute()
 
 
 GLOBAL_CONFIG = Config(

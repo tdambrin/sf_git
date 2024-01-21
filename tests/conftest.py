@@ -29,12 +29,29 @@ def setup_and_teardown():
         shutil.rmtree(REPO_ROOT_PATH)
 
     shutil.copytree(TESTING_FOLDER / "data", REPO_DATA_PATH, dirs_exist_ok=True)
+    shutil.copy(PACKAGE_ROOT / "sf_git.test.conf", REPO_ROOT_PATH)
 
     # ---- RUN TESTS -----
     yield
 
     # ---- TEARDOWN -----
     shutil.rmtree(REPO_ROOT_PATH)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def mock_config():
+    def side_effect_test_config():
+        GLOBAL_CONFIG = Config(
+            repo_path=REPO_ROOT_PATH,
+            worksheets_path=REPO_DATA_PATH,
+            sf_account_id=TEST_CONF['SF_ACCOUNT_ID'],
+            sf_login_name=TEST_CONF['SF_LOGIN_NAME'],
+        )
+
+        return GLOBAL_CONFIG
+
+    with patch("sf_git.config.GLOBAL_CONFIG", side_effect_test_config()) as mocked:
+        yield mocked
 
 
 @pytest.fixture(scope="session", name="repo")
@@ -63,17 +80,7 @@ def repo() -> Repo:
     return repo
 
 
-@pytest.fixture(scope="session", autouse=True)
-def mock_config():
-    def side_effect_test_config():
-        global_config = Config(
-            repo_path=REPO_ROOT_PATH,
-            worksheets_path=REPO_DATA_PATH,
-            sf_account_id=TEST_CONF['SF_ACCOUNT_ID'],
-            sf_login_name=TEST_CONF['SF_LOGIN_NAME'],
-        )
-
-        return global_config
-
-    with patch("sf_git.config.global_config", side_effect_test_config()) as mocked:
-        yield mocked
+@pytest.fixture(autouse=True)
+def mock_env(monkeypatch):
+    import sf_git
+    monkeypatch.setattr(sf_git, "DOTENV_PATH", REPO_ROOT_PATH / 'sf_git.test.conf')

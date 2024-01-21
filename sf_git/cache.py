@@ -2,25 +2,28 @@ import json
 import os
 import re
 import git
-from typing import List, Optional
+from pathlib import Path
+from typing import List, Optional, Union
 
-from sf_git.config import global_config
+from sf_git.config import GLOBAL_CONFIG
 from sf_git.models import Worksheet, WorksheetError
 from sf_git.git_utils import get_tracked_files, get_blobs_content
 
 
 def save_worksheets_to_cache(worksheets: List[Worksheet]):
     """
-    Save worksheets to cache.
+    Save worksheets to cache. Git is not involved here.
 
     For each worksheet, two files are created/overriden:
-        - .<ws_name>_metadata.json (worksheet infos)
+        - .<ws_name>_metadata.json (worksheet info)
         - <ws_name>.sql or <ws_name>.py (worksheet content)
+
+    :param worksheets: list of worksheets to save.
     """
 
-    print(f"[Worksheets] Saving to {global_config.worksheets_path}")
-    if not os.path.exists(global_config.worksheets_path):
-        os.makedirs(global_config.worksheets_path, exist_ok=True)
+    print(f"[Worksheets] Saving to {GLOBAL_CONFIG.worksheets_path}")
+    if not os.path.exists(GLOBAL_CONFIG.worksheets_path):
+        os.makedirs(GLOBAL_CONFIG.worksheets_path, exist_ok=True)
 
     for ws in worksheets:
         ws_name = re.sub(r"[ :/]", "_", ws.name)
@@ -33,13 +36,13 @@ def save_worksheets_to_cache(worksheets: List[Worksheet]):
             )
 
             # create folder if not exists
-            if not os.path.exists(global_config.worksheets_path / folder_name):
-                os.mkdir(global_config.worksheets_path / folder_name)
+            if not os.path.exists(GLOBAL_CONFIG.worksheets_path / folder_name):
+                os.mkdir(GLOBAL_CONFIG.worksheets_path / folder_name)
         else:
             file_name = f"{ws_name}.{extension}"
             worksheet_metadata_file_name = f".{ws_name}_metadata.json"
 
-        with open(global_config.worksheets_path / file_name, "w") as f:
+        with open(GLOBAL_CONFIG.worksheets_path / file_name, "w") as f:
             f.write(ws.content)
         ws_metadata = {
             "name": ws.name,
@@ -49,31 +52,35 @@ def save_worksheets_to_cache(worksheets: List[Worksheet]):
             "content_type": ws.content_type,
         }
         with open(
-            global_config.worksheets_path / worksheet_metadata_file_name, "w"
+            GLOBAL_CONFIG.worksheets_path / worksheet_metadata_file_name, "w"
         ) as f:
             f.write(json.dumps(ws_metadata))
     print("[Worksheets] Saved")
 
 
 def load_worksheets_from_cache(
+    repo: git.Repo,
     branch_name: Optional[str] = None,
-    only_folder: Optional[str] = None,
+    only_folder: Optional[Union[str, Path]] = None,
 ) -> List[Worksheet]:
     """
     Load worksheets from cache.
+
+    :param repo: Git repository as it only considers tracked files
+    :param branch_name: name of git branch to get files from
+    :param only_folder: to get only worksheets in that folder
+
+    :return: list of tracked worksheet objects
     """
 
-    print(f"[Worksheets] Loading from {global_config.worksheets_path}")
-    if not os.path.exists(global_config.worksheets_path):
+    print(f"[Worksheets] Loading from {GLOBAL_CONFIG.worksheets_path}")
+    if not os.path.exists(GLOBAL_CONFIG.worksheets_path):
         raise WorksheetError(
             "Could not retrieve worksheets from cache. "
-            f"The folder {global_config.worksheets_path} does not exist"
+            f"The folder {GLOBAL_CONFIG.worksheets_path} does not exist"
         )
 
-    # get file content from git utils
-    repo = git.Repo(global_config.repo_path)
-    # import ipdb; ipdb.set_trace()
-    tracked_files = [f for f in get_tracked_files(repo, global_config.worksheets_path, branch_name)]
+    tracked_files = [f for f in get_tracked_files(repo, GLOBAL_CONFIG.worksheets_path, branch_name)]
 
     # filter on worksheet files
     ws_metadata_files = [

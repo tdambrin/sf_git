@@ -25,7 +25,7 @@ class Config:
                 self.worksheets_path = WindowsPath(self.worksheets_path)
 
 
-global_config = Config(
+GLOBAL_CONFIG = Config(
     repo_path=Path(os.environ["SNOWFLAKE_VERSIONING_REPO"]).absolute(),
     worksheets_path=Path(
         os.environ.get("WORKSHEETS_PATH") or "/tmp/snowflake_worksheets"

@@ -1,6 +1,6 @@
+from pathlib import Path
 import git
 import os
-from pathlib import Path
 import dotenv
 
 import click
@@ -145,11 +145,12 @@ def config_repo(
     if save_dir:
         save_dir = Path(save_dir).absolute()
         # get git_repo
-        git_repo = Path(git_repo).absolute() if git_repo else config.GLOBAL_CONFIG.repo_path
-        if (
-            git_repo not in save_dir.parents
-            and git_repo != save_dir
-        ):
+        git_repo = (
+            Path(git_repo).absolute()
+            if git_repo
+            else config.GLOBAL_CONFIG.repo_path
+        )
+        if git_repo not in save_dir.parents and git_repo != save_dir:
             raise UsageError(
                 "[Config] "
                 f"{save_dir} is not a subdirectory of {git_repo}.\n"
@@ -275,9 +276,7 @@ def fetch_worksheets(
 
     click.echo(" ## Getting worksheets ##")
     worksheets = sf_get_worksheets(
-        auth_context,
-        store_to_cache=store,
-        only_folder=only_folder
+        auth_context, store_to_cache=store, only_folder=only_folder
     )
 
     click.echo("## Got worksheets ##")
@@ -306,7 +305,9 @@ def commit(
     try:
         repo = git.Repo(config.GLOBAL_CONFIG.repo_path)
     except git.InvalidGitRepositoryError:
-        raise Exception(f"Could not find Git Repository here : {config.GLOBAL_CONFIG.repo_path}")
+        raise Exception(
+            f"Could not find Git Repository here : {config.GLOBAL_CONFIG.repo_path}"
+        )
 
     # Get git branch
     if branch:
@@ -365,8 +366,12 @@ def commit(
     help="Only push worksheets with given folder name",
 )
 def push_worksheets(
-    username: str, account_id: str, auth_mode: str, password: str,
-    branch: str, only_folder: str,
+    username: str,
+    account_id: str,
+    auth_mode: str,
+    password: str,
+    branch: str,
+    only_folder: str,
 ):
     """
     Upload locally stored worksheets to Snowsight user workspace.
@@ -430,7 +435,8 @@ def push_worksheets(
     print_worksheets(worksheets)
 
     click.echo("## Uploading to SnowSight ##")
-    worksheet_errors = upload_to_snowsight(auth_context, worksheets)
+    upload_report = upload_to_snowsight(auth_context, worksheets)
+    worksheet_errors = upload_report["errors"]
     click.echo("## Uploaded to SnowSight ##")
 
     if worksheet_errors is not None:

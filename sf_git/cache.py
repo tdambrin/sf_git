@@ -1,9 +1,9 @@
 import json
 import os
 import re
-import git
 from pathlib import Path
 from typing import List, Optional, Union
+import git
 
 import sf_git.config as config
 from sf_git.models import Worksheet, WorksheetError
@@ -115,7 +115,8 @@ def load_worksheets_from_cache(
             )
         except StopIteration:
             print(f'{content_filename} not found in {[f.name for f in tracked_files]}')
-            pass  # FixMe
+            # FixMe
+
         ws_content_as_dict = get_blobs_content([content_blob])
         ws_content = list(ws_content_as_dict.values())[0]
         current_ws.content = ws_content

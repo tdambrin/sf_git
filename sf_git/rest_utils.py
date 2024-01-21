@@ -69,7 +69,7 @@ def api_post(
                 f"POST {base_url}/{rest_api_url} returned "
                 f"{response.status_code}"
                 f"({response.reason})\nRequest Headers:\n{headers}\nCookies:\n"
-                "{len(result_string)}:\n{result_string}"
+                f"{len(result_string)}:\n{result_string}"
             )
 
             return result_string
@@ -137,5 +137,5 @@ def start_browser(url: str):
         subprocess.Popen(["open", url])
     else:
         raise NotImplementedError(
-            "Unsupported platform: %s" % platform.system()
+            f"Unsupported platform: {platform.system()}"
         )

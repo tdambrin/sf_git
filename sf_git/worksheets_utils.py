@@ -1,8 +1,8 @@
 import json
 from urllib import parse
+from typing import List, Optional
 import pandas as pd
 import requests
-from typing import Optional, List
 
 from sf_git.cache import save_worksheets_to_cache
 from sf_git.models import (
@@ -279,11 +279,21 @@ def create_folder(
 
 def upload_to_snowsight(
     auth_context: AuthenticationContext, worksheets: List[Worksheet]
-) -> Optional[list]:
+) -> dict[str, List[dict]]:
     """
     Upload worksheets to Snowsight user workspace
     keeping folder architecture.
+
+    :param auth_context: Authentication info for Snowsight
+    :param worksheets: list of worksheets to upload
+
+    :param
     """
+
+    upload_report = {
+        "completed": [],
+        "errors": []
+    }
 
     ss_folders = get_folders(auth_context)
     ss_folders = {folder.name: folder for folder in ss_folders}
@@ -295,7 +305,6 @@ def upload_to_snowsight(
         " ## Writing local worksheet to SnowSight"
         f" for user {auth_context.username} ##"
     )
-    worksheet_errors = []
     for ws in worksheets:
         # folder management
         if ws.folder_name:
@@ -330,9 +339,9 @@ def upload_to_snowsight(
                 ),
             )
             if err is not None:
-                worksheet_errors.append({"name": ws.name, "error": err})
+                upload_report['errors'].append({"name": ws.name, "error": err})
+            else:
+                upload_report['completed'].append({'name': ws.name})
 
     print(" ## SnowSight updated ##")
-
-    if len(worksheet_errors) > 1:
-        return worksheet_errors
+    return upload_report

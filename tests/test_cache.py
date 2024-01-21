@@ -80,7 +80,9 @@ def test_save_sql_ws_to_cache_existing_folder(worksheet):
         content="import sf_git; print(sf_git.__version__)"
     )]
 )
-def test_save_py_ws_to_cache_existing_folder(worksheet):
+def test_save_py_ws_to_cache_existing_folder(
+        worksheet
+):
 
     cache.save_worksheets_to_cache([worksheet])
 
@@ -132,3 +134,31 @@ def test_save_unsupported_extension_ws_to_cache_new_folder(worksheet):
     expected_file_path = config.GLOBAL_CONFIG.worksheets_path / "new_folder_for_test" / f"{worksheet.name}.scala"
 
     assert not expected_file_path.is_file()
+
+
+@pytest.mark.run(after='test_save_py_ws_to_cache_existing_folder')
+def test_load_only_tracked_files(
+    repo,
+):
+
+    worksheets = cache.load_worksheets_from_cache(
+        repo,
+        only_folder="Benchmarking Tutorials"
+    )
+
+    assert isinstance(worksheets, list)
+    assert 'test_worksheet_02' not in [ws.name for ws in worksheets]
+
+
+@pytest.mark.run(after='test_save_sql_ws_to_cache_new_folder')
+def test_load_only_tracked_files(
+    repo,
+):
+
+    worksheets = cache.load_worksheets_from_cache(
+        repo,
+        only_folder="new_folder_for_test"
+    )
+
+    assert isinstance(worksheets, list)
+    assert len(worksheets) == 0

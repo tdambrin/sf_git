@@ -57,7 +57,9 @@ def get_worksheets(
         )
     res_data = json.loads(res.text)
     entities = res_data["entities"]
-    contents = res_data["models"]["queries"]
+    contents = res_data["models"].get("queries")
+    if contents is None:
+        return []
 
     worksheets = []
     for worksheet in entities:
@@ -287,7 +289,7 @@ def upload_to_snowsight(
     :param auth_context: Authentication info for Snowsight
     :param worksheets: list of worksheets to upload
 
-    :param
+    :returns: upload report with {'completed': list, 'errors': list}
     """
 
     upload_report = {

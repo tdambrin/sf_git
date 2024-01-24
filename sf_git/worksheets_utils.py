@@ -1,6 +1,6 @@
 import json
 from urllib import parse
-from typing import List, Optional
+from typing import Callable, List, Optional
 import pandas as pd
 import requests
 
@@ -88,9 +88,23 @@ def get_worksheets(
     return worksheets
 
 
-def print_worksheets(worksheets: List[Worksheet], n=10):
+def print_worksheets(
+    worksheets: List[Worksheet],
+    n=10,
+    logger: Callable = print
+):
+    """
+    Log worksheets as a dataframe.
+
+    :param worksheets: worksheets to log
+    :param n: maximum number of worksheets to print (from head)
+    :param logger: logging function e.g. print
+    """
     worksheets_df = pd.DataFrame([ws.to_dict() for ws in worksheets])
-    print(worksheets_df.head(n))
+    if worksheets_df.empty:
+        logger("No worksheet")
+    else:
+        logger(worksheets_df.head(n))
 
 
 def write_worksheet(

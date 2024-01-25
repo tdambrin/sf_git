@@ -1,8 +1,9 @@
 from pathlib import Path
+from typing import List, Type, Union, Dict, Optional
+
 from git.objects.blob import Blob
 from git.objects.tree import Tree
 from git.repo.base import Repo
-from typing import List, Type, Union, Dict, Optional
 
 from sf_git.models import SnowflakeGitError
 

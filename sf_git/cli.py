@@ -1,6 +1,7 @@
 import click
 
 import sf_git.config as config
+import sf_git.commands
 
 
 @click.group()
@@ -30,9 +31,7 @@ def init(path: str, mkdir: bool):
     Initialize a git repository and set it as the sfgit versioning repository.
     """
 
-    from sf_git.commands import init_repo_procedure
-
-    init_repo_procedure(path=path, mkdir=mkdir)
+    sf_git.commands.init_repo_procedure(path=path, mkdir=mkdir)
 
 
 @click.command("config")
@@ -92,15 +91,10 @@ def config_repo(
     Git_repo configuration is mandatory.
     """
 
-    from sf_git.commands import (
-        get_config_repo_procedure,
-        set_config_repo_procedure,
-    )
-
     if get:
-        get_config_repo_procedure(get, click.echo)
+        sf_git.commands.get_config_repo_procedure(get, click.echo)
     else:
-        set_config_repo_procedure(
+        sf_git.commands.set_config_repo_procedure(
             git_repo=git_repo,
             save_dir=save_dir,
             account=account,
@@ -152,13 +146,11 @@ def fetch_worksheets(
     Fetch worksheets from user Snowsight account and store them in cache.
     """
 
-    from sf_git.commands import fetch_worksheets_procedure
-
     username = username or config.GLOBAL_CONFIG.sf_login_name
     account_id = account_id or config.GLOBAL_CONFIG.sf_account_id
     password = password or config.GLOBAL_CONFIG.sf_pwd
 
-    fetch_worksheets_procedure(
+    sf_git.commands.fetch_worksheets_procedure(
         username=username,
         account_id=account_id,
         auth_mode=auth_mode,
@@ -185,9 +177,7 @@ def commit(
     Commit Snowsight worksheets to Git repository.
     """
 
-    from sf_git.commands import commit_procedure
-
-    commit_procedure(branch=branch, message=message, logger=click.echo)
+    sf_git.commands.commit_procedure(branch=branch, message=message, logger=click.echo)
 
 
 @click.command("push")
@@ -233,13 +223,11 @@ def push_worksheets(
     More flexibility to come.
     """
 
-    from sf_git.commands import push_worksheets_procedure
-
     username = username or config.GLOBAL_CONFIG.sf_login_name
     account_id = account_id or config.GLOBAL_CONFIG.sf_account_id
     password = password or config.GLOBAL_CONFIG.sf_pwd
 
-    push_worksheets_procedure(
+    sf_git.commands.push_worksheets_procedure(
         username=username,
         account_id=account_id,
         auth_mode=auth_mode,

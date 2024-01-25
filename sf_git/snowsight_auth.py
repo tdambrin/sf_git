@@ -237,6 +237,7 @@ def oauth_start_get_snowsight_client_id_in_deployment(
         f"{app_server_url}/{rest_api_url}",
         headers={"Accept": "text/html"},
         allow_redirects=True,
+        timeout=10,
     )
 
     if response.status_code == 200:
@@ -295,6 +296,7 @@ def oauth_complete_get_auth_token_from_redirect(
         headers={"Accept": "text/html"},
         cookies=cookie,
         allow_redirects=True,
+        timeout=10,
     )
 
     return response

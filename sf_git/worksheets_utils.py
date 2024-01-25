@@ -326,6 +326,11 @@ def upload_to_snowsight(
             else:
                 print(f"creating folder {ws.folder_name}")
                 folder_id = create_folder(auth_context, ws.folder_name)
+                new_folder = Folder(
+                    folder_id,
+                    ws.folder_name,
+                )
+                ss_folders[ws.folder_name] = new_folder
         else:
             folder_id = None
 

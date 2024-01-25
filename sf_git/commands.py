@@ -376,7 +376,7 @@ def push_worksheets_procedure(
     worksheet_errors = upload_report["errors"]
     logger("## Uploaded to SnowSight ##")
 
-    if worksheet_errors is not None:
+    if worksheet_errors:
         logger("Errors happened for the following worksheets :")
         for err in worksheet_errors:
             logger(

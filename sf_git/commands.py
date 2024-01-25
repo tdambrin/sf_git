@@ -59,6 +59,7 @@ def get_config_repo_procedure(key: str, logger: Callable = print) -> str:
 
     :returns: sf_git config value
     """
+
     dotenv_config = dotenv.dotenv_values(DOTENV_PATH)
     if key not in dotenv_config.keys():
         raise UsageError(
@@ -97,25 +98,26 @@ def set_config_repo_procedure(
 
     # check repositories
     if git_repo:
-        git_repo = Path(git_repo).absolute()
+        repo_path = Path(git_repo).absolute()
         if not os.path.exists(git_repo):
             raise UsageError(
                 f"[Config] {git_repo} does not exist."
                 "Please provide path towards an existing git repository"
                 " or create a new one with sfgit init."
             )
+
     if save_dir:
         save_dir = Path(save_dir).absolute()
         # get git_repo
-        git_repo = (
+        repo_path = (
             Path(git_repo).absolute()
             if git_repo
             else config.GLOBAL_CONFIG.repo_path
         )
-        if git_repo not in save_dir.parents and git_repo != save_dir:
+        if repo_path not in save_dir.parents and repo_path != save_dir:
             raise UsageError(
                 "[Config] "
-                f"{save_dir} is not a subdirectory of {git_repo}.\n"
+                f"{save_dir} is not a subdirectory of {repo_path}.\n"
                 "Please provide a saving directory within the git repository."
             )
 
@@ -166,7 +168,7 @@ def set_config_repo_procedure(
             value_to_set=password,
         )
         logger("Set SF_PWD to provided password.")
-        updates["SF_LOGIN_NAME"] = "*" * len(password)
+        updates["SF_PWD"] = "*" * len(password)
 
     return updates
 
@@ -351,8 +353,13 @@ def push_worksheets_procedure(
         logger(" ## Authentication failed ##")
         exit(1)
 
-    # get file content from git utils
-    repo = git.Repo(config.GLOBAL_CONFIG.repo_path)
+    # Get file content from git utils
+    try:
+        repo = git.Repo(config.GLOBAL_CONFIG.repo_path)
+    except git.InvalidGitRepositoryError:
+        raise SnowflakeGitError(
+            f"Could not find Git Repository here : {config.GLOBAL_CONFIG.repo_path}"
+        )
 
     logger(f" ## Getting worksheets from cache for user {username} ##")
     worksheets = load_worksheets_from_cache(

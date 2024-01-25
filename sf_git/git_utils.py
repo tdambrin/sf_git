@@ -1,8 +1,9 @@
+from pathlib import Path
+from typing import List, Type, Union, Dict, Optional
+
 from git.objects.blob import Blob
 from git.objects.tree import Tree
 from git.repo.base import Repo
-from pathlib import Path
-from typing import List, Type, Union, Dict, Optional
 
 from sf_git.models import SnowflakeGitError
 
@@ -12,6 +13,12 @@ def get_tracked_files(
 ) -> List[Union[Type[Blob], Type[Tree]]]:
     """
     Get all git tracked files in a folder inside a git repo
+
+    :param repo: git repository tracking files
+    :param folder: name of folder inside git repo to only load from
+    :param branch_name: branch to consider, default is active branch
+
+    :returns: list of blobs (file) and tree (dir)
     """
 
     # check that folder is in git
@@ -33,20 +40,20 @@ def get_tracked_files(
         branch = repo.active_branch
 
     # get to folder by folder names
-    repo_objects = [obj for obj in branch.commit.tree.traverse()]
+    repo_objects = branch.commit.tree.traverse()
     try:
         folder_tree = next(
             obj for obj in repo_objects if obj.abspath == str(folder)
         )
-    except StopIteration:
+    except StopIteration as exc:
         raise SnowflakeGitError(
             f"Unable to retrieve folder {str(folder)}"
             f" in Repository {repo.working_dir} and branch {branch.name}."
             "Please check that the files you are looking for are committed"
-        )
+        ) from exc
 
     # get files
-    tracked_files = [obj for obj in folder_tree.traverse()]
+    tracked_files = folder_tree.traverse()
     return tracked_files
 
 

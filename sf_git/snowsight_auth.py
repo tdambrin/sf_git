@@ -18,7 +18,7 @@ from sf_git.models import (
     AuthenticationMode,
     AuthenticationError,
 )
-from sf_git.config import SF_MAIN_APP_URL
+import sf_git.config as config
 
 urllib3.disable_warnings()
 
@@ -29,9 +29,8 @@ def authenticate_to_snowsight(
     password: str,
     auth_mode: AuthenticationMode = AuthenticationMode.PWD,
 ) -> AuthenticationContext:
-
     auth_context = AuthenticationContext()
-    auth_context.main_app_url = SF_MAIN_APP_URL
+    auth_context.main_app_url = config.GLOBAL_CONFIG.sf_main_app_url
     auth_context.account_name = account_name
     auth_context.login_name = login_name
 
@@ -178,7 +177,7 @@ def authenticate_to_snowsight(
 
 
 def get_account_app_endpoint(account_name: str):
-    main_app_url = SF_MAIN_APP_URL
+    main_app_url = config.GLOBAL_CONFIG.sf_main_app_url
     response = api_post(
         main_app_url,
         f"v0/validate-snowflake-url?url={account_name}",
@@ -233,14 +232,14 @@ def oauth_start_get_snowsight_client_id_in_deployment(
         f"{parse.quote_plus(account_url)}"
         f"&state={parse.quote_plus(state_params)}"
     )
- 
+
     response = requests.get(
         f"{app_server_url}/{rest_api_url}",
-        headers={'Accept': 'text/html'},
+        headers={"Accept": "text/html"},
         allow_redirects=True,
+        timeout=10,
     )
 
- 
     if response.status_code == 200:
         return response
 
@@ -297,6 +296,7 @@ def oauth_complete_get_auth_token_from_redirect(
         headers={"Accept": "text/html"},
         cookies=cookie,
         allow_redirects=True,
+        timeout=10,
     )
 
     return response

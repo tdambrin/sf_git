@@ -1,8 +1,8 @@
 import json
 from urllib import parse
+from typing import Callable, List, Optional
 import pandas as pd
 import requests
-from typing import Optional
 
 from sf_git.cache import save_worksheets_to_cache
 from sf_git.models import (
@@ -17,8 +17,8 @@ from sf_git.models import (
 def get_worksheets(
     auth_context: AuthenticationContext,
     store_to_cache: Optional[bool] = False,
-    only_folder: Optional[str]=None
-) -> list:
+    only_folder: Optional[str] = None,
+) -> List[Worksheet]:
     """
     Get list of worksheets available for authenticated user
     """
@@ -57,11 +57,16 @@ def get_worksheets(
         )
     res_data = json.loads(res.text)
     entities = res_data["entities"]
-    contents = res_data["models"]["queries"]
+    contents = res_data["models"].get("queries")
+    if contents is None:
+        return []
 
     worksheets = []
     for worksheet in entities:
-        if only_folder is not None and worksheet["info"]["folderName"] != only_folder:
+        if (
+            only_folder is not None
+            and worksheet["info"]["folderName"] != only_folder
+        ):
             continue
         if worksheet["entityType"] == "query":
             current_ws = Worksheet(
@@ -85,9 +90,21 @@ def get_worksheets(
     return worksheets
 
 
-def print_worksheets(worksheets: list, n=10):
+def print_worksheets(
+    worksheets: List[Worksheet], n=10, logger: Callable = print
+):
+    """
+    Log worksheets as a dataframe.
+
+    :param worksheets: worksheets to log
+    :param n: maximum number of worksheets to print (from head)
+    :param logger: logging function e.g. print
+    """
     worksheets_df = pd.DataFrame([ws.to_dict() for ws in worksheets])
-    print(worksheets_df.head(n))
+    if worksheets_df.empty:
+        logger("No worksheet")
+    else:
+        logger(worksheets_df.head(n))
 
 
 def write_worksheet(
@@ -178,7 +195,7 @@ def create_worksheet(
     return response_data["pid"]
 
 
-def get_folders(auth_context: AuthenticationContext) -> list:
+def get_folders(auth_context: AuthenticationContext) -> List[Folder]:
     """
     Get list of folders on authenticated user workspace
     """
@@ -229,7 +246,7 @@ def get_folders(auth_context: AuthenticationContext) -> list:
     return folders
 
 
-def print_folders(folders: list, n=10):
+def print_folders(folders: List[Folder], n=10):
     folders_df = pd.DataFrame([f.to_dict() for f in folders])
     print(folders_df.head(n))
 
@@ -277,12 +294,19 @@ def create_folder(
 
 
 def upload_to_snowsight(
-    auth_context: AuthenticationContext, worksheets: list
-) -> Optional[list]:
+    auth_context: AuthenticationContext, worksheets: List[Worksheet]
+) -> dict[str, List[dict]]:
     """
     Upload worksheets to Snowsight user workspace
     keeping folder architecture.
+
+    :param auth_context: Authentication info for Snowsight
+    :param worksheets: list of worksheets to upload
+
+    :returns: upload report with {'completed': list, 'errors': list}
     """
+
+    upload_report = {"completed": [], "errors": []}
 
     ss_folders = get_folders(auth_context)
     ss_folders = {folder.name: folder for folder in ss_folders}
@@ -294,7 +318,6 @@ def upload_to_snowsight(
         " ## Writing local worksheet to SnowSight"
         f" for user {auth_context.username} ##"
     )
-    worksheet_errors = []
     for ws in worksheets:
         # folder management
         if ws.folder_name:
@@ -303,6 +326,11 @@ def upload_to_snowsight(
             else:
                 print(f"creating folder {ws.folder_name}")
                 folder_id = create_folder(auth_context, ws.folder_name)
+                new_folder = Folder(
+                    folder_id,
+                    ws.folder_name,
+                )
+                ss_folders[ws.folder_name] = new_folder
         else:
             folder_id = None
 
@@ -329,9 +357,9 @@ def upload_to_snowsight(
                 ),
             )
             if err is not None:
-                worksheet_errors.append({"name": ws.name, "error": err})
+                upload_report["errors"].append({"name": ws.name, "error": err})
+            else:
+                upload_report["completed"].append({"name": ws.name})
 
     print(" ## SnowSight updated ##")
-
-    if len(worksheet_errors) > 1:
-        return worksheet_errors
+    return upload_report

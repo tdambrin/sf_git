@@ -1,0 +1,49 @@
+[{
+    "entityId": "4ux48jcFhEw",
+    "entityType": "query",
+    "info": {
+        "name": "[Template] Adding a user and granting roles",
+        "slug": "mocked",
+        "version": 0,
+        "content": "",
+        "dashboardRows": [],
+        "folderId": "Ga8xhnsR",
+        "folderName": "Getting Started Tutorials",
+        "folderType": "list",
+        "folderUrl": "/mocked",
+        "folderSlug": "getting-started-tutorials-fGa8xhnsR",
+        "visibility": "private",
+        "ownerId": 0,
+        "modified": "2024-01-19T01:45:29.514886Z",
+        "created": "2024-01-14T08:27:39.503542Z",
+        "viewed": "2024-01-17T01:03:59.460044Z",
+        "queryLanguage": "sql",
+        "role": "ACCOUNTADMIN",
+        "url": "/mocked"
+    },
+    "match": null
+},
+{
+        "entityId": "Ga8xhnsR",
+        "entityType": "folder",
+        "info": {
+            "name": "Getting Started Tutorials",
+            "slug": "getting-started-tutorials-fGa8xhnsR",
+            "version": 0,
+            "content": "",
+            "dashboardRows": [],
+            "folderId": null,
+            "folderName": "",
+            "folderType": "list",
+            "visibility": "private",
+            "ownerId": 0,
+            "modified": "2024-01-23T00:56:39.139336Z",
+            "created": "2024-01-23T00:56:39.139336Z",
+            "viewed": null,
+            "queryLanguage": "",
+            "role": "ACCOUNTADMIN",
+            "url": "/mocked"
+        },
+        "match": null
+    }
+]

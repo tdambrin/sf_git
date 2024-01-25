@@ -1,26 +1,29 @@
 import json
 import os
 import re
+from pathlib import Path
+from typing import List, Optional, Union
 import git
-from typing import Optional
 
-from sf_git.config import WORKSHEETS_PATH, REPO_PATH
+import sf_git.config as config
 from sf_git.models import Worksheet, WorksheetError
 from sf_git.git_utils import get_tracked_files, get_blobs_content
 
 
-def save_worksheets_to_cache(worksheets: list):
+def save_worksheets_to_cache(worksheets: List[Worksheet]):
     """
-    Save worksheets to cache.
+    Save worksheets to cache. Git is not involved here.
 
     For each worksheet, two files are created/overriden:
-        - .<ws_name>_metadata.json (worksheet infos)
+        - .<ws_name>_metadata.json (worksheet info)
         - <ws_name>.sql or <ws_name>.py (worksheet content)
+
+    :param worksheets: list of worksheets to save
     """
 
-    print(f"[Worksheets] Saving to {WORKSHEETS_PATH}")
-    if not os.path.exists(WORKSHEETS_PATH):
-        os.makedirs(WORKSHEETS_PATH, exist_ok=True)
+    print(f"[Worksheets] Saving to {config.GLOBAL_CONFIG.worksheets_path}")
+    if not os.path.exists(config.GLOBAL_CONFIG.worksheets_path):
+        os.makedirs(config.GLOBAL_CONFIG.worksheets_path, exist_ok=True)
 
     for ws in worksheets:
         ws_name = re.sub(r"[ :/]", "_", ws.name)
@@ -33,13 +36,15 @@ def save_worksheets_to_cache(worksheets: list):
             )
 
             # create folder if not exists
-            if not os.path.exists(WORKSHEETS_PATH / folder_name):
-                os.mkdir(WORKSHEETS_PATH / folder_name)
+            if not os.path.exists(
+                config.GLOBAL_CONFIG.worksheets_path / folder_name
+            ):
+                os.mkdir(config.GLOBAL_CONFIG.worksheets_path / folder_name)
         else:
             file_name = f"{ws_name}.{extension}"
             worksheet_metadata_file_name = f".{ws_name}_metadata.json"
 
-        with open(WORKSHEETS_PATH / file_name, "w") as f:
+        with open(config.GLOBAL_CONFIG.worksheets_path / file_name, "w") as f:
             f.write(ws.content)
         ws_metadata = {
             "name": ws.name,
@@ -49,30 +54,42 @@ def save_worksheets_to_cache(worksheets: list):
             "content_type": ws.content_type,
         }
         with open(
-            WORKSHEETS_PATH / worksheet_metadata_file_name, "w"
+            config.GLOBAL_CONFIG.worksheets_path
+            / worksheet_metadata_file_name,
+            "w",
         ) as f:
             f.write(json.dumps(ws_metadata))
     print("[Worksheets] Saved")
 
 
 def load_worksheets_from_cache(
+    repo: git.Repo,
     branch_name: Optional[str] = None,
-    only_folder: Optional[str] = None,
-) -> list:
+    only_folder: Optional[Union[str, Path]] = None,
+) -> List[Worksheet]:
     """
     Load worksheets from cache.
+
+    :param repo: Git repository as it only considers tracked files
+    :param branch_name: name of git branch to get files from
+    :param only_folder: to get only worksheets in that folder
+
+    :return: list of tracked worksheet objects
     """
 
-    print(f"[Worksheets] Loading from {WORKSHEETS_PATH}")
-    if not os.path.exists(WORKSHEETS_PATH):
+    print(f"[Worksheets] Loading from {config.GLOBAL_CONFIG.worksheets_path}")
+    if not os.path.exists(config.GLOBAL_CONFIG.worksheets_path):
         raise WorksheetError(
             "Could not retrieve worksheets from cache. "
-            f"The folder {WORKSHEETS_PATH} does not exist"
+            f"The folder {config.GLOBAL_CONFIG.worksheets_path} does not exist"
         )
 
-    # get file content from git utils
-    repo = git.Repo(REPO_PATH)
-    tracked_files = get_tracked_files(repo, WORKSHEETS_PATH, branch_name)
+    tracked_files = [
+        f
+        for f in get_tracked_files(
+            repo, config.GLOBAL_CONFIG.worksheets_path, branch_name
+        )
+    ]
 
     # filter on worksheet files
     ws_metadata_files = [
@@ -106,7 +123,11 @@ def load_worksheets_from_cache(
                 f for f in tracked_files if f.name == content_filename
             )
         except StopIteration:
-            pass  # FixMe
+            print(
+                f"{content_filename} not found in {[f.name for f in tracked_files]}"
+            )
+            return []
+
         ws_content_as_dict = get_blobs_content([content_blob])
         ws_content = list(ws_content_as_dict.values())[0]
         current_ws.content = ws_content

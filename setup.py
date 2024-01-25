@@ -1,17 +1,5 @@
 from setuptools import find_packages, setup
 
-requirements = """
-pip>=21.3.1
-setuptools>=56
-pandas
-coverage
-python-dotenv
-click==7.1.2
-deepdiff
-gitpython
-requests
-"""
-
 description = """
 Python package to manipulate Snowsight worksheets
  and easily apply Git versioning on it.
@@ -19,6 +7,9 @@ Python package to manipulate Snowsight worksheets
 
 with open("README.md", "r") as f:
     long_description = f.read()
+
+with open("requirements.txt", "r") as f:
+    requirements = f.read()
 
 setup(
     name="sf_git",

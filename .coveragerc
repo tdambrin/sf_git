@@ -1,0 +1,8 @@
+[run]
+source = sf_git
+omit =
+    *tests*
+    sf_git/cli.py
+    sf_git/snowsight_auth.py
+    sf_git/rest_utils.py
+disable_warnings = no-data-collected

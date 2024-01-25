@@ -69,7 +69,7 @@ def api_post(
                 f"POST {base_url}/{rest_api_url} returned "
                 f"{response.status_code}"
                 f"({response.reason})\nRequest Headers:\n{headers}\nCookies:\n"
-                "{len(result_string)}:\n{result_string}"
+                f"{len(result_string)}:\n{result_string}"
             )
 
             return result_string
@@ -119,13 +119,13 @@ def api_post(
         logging.info(f"POST {base_url}/{rest_api_url} took {elapsed_time:.2f}")
 
 
-def random_unused_port():
+def random_unused_port() -> int:
     sock = socket.socket()
     sock.bind(("", 0))
     return sock.getsockname()[1]
 
 
-def start_browser(url):
+def start_browser(url: str):
     if platform.system() == "Windows":
         subprocess.Popen(
             ["cmd", "/c", "start", url.replace("&", "^&")],
@@ -136,6 +136,4 @@ def start_browser(url):
     elif platform.system() == "Darwin":
         subprocess.Popen(["open", url])
     else:
-        raise NotImplementedError(
-            "Unsupported platform: %s" % platform.system()
-        )
+        raise NotImplementedError(f"Unsupported platform: {platform.system()}")

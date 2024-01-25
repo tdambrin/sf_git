@@ -1,26 +1,7 @@
-import git
-import os
-from pathlib import Path
-import dotenv
-
 import click
-from click import UsageError
 
-from sf_git.cache import load_worksheets_from_cache
-from sf_git.config import (
-    REPO_PATH,
-    WORKSHEETS_PATH,
-    SF_ACCOUNT_ID,
-    SF_LOGIN_NAME,
-    SF_PWD,
-)
-from sf_git.snowsight_auth import authenticate_to_snowsight
-from sf_git.models import AuthenticationMode
-from sf_git.worksheets_utils import get_worksheets as sf_get_worksheets
-from sf_git.worksheets_utils import (
-    print_worksheets,
-    upload_to_snowsight,
-)
+import sf_git.config as config
+import sf_git.commands
 
 
 @click.group()
@@ -50,24 +31,7 @@ def init(path: str, mkdir: bool):
     Initialize a git repository and set it as the sfgit versioning repository.
     """
 
-    abs_path = Path(path).absolute()
-    if not os.path.exists(abs_path) and not mkdir:
-        raise UsageError(
-            f"[Init] {abs_path} does not exist."
-            "\nPlease provide a path towards an existing directory"
-            " or add the --mkdir option to create it."
-        )
-
-    # create repository
-    git.Repo.init(path, mkdir=mkdir)
-
-    # set as sfgit versioning repository
-    dotenv_path = Path(__file__).parent / "sf_git.conf"
-    dotenv.set_key(
-        dotenv_path,
-        key_to_set="SNOWFLAKE_VERSIONING_REPO",
-        value_to_set=str(abs_path),
-    )
+    sf_git.commands.init_repo_procedure(path=path, mkdir=mkdir)
 
 
 @click.command("config")
@@ -127,71 +91,16 @@ def config_repo(
     Git_repo configuration is mandatory.
     """
 
-    dotenv_path = Path(__file__).parent / "sf_git.conf"
     if get:
-        config = dotenv.dotenv_values(dotenv_path)
-        if get not in config.keys():
-            raise UsageError(
-                f"[Config] {get} does not exist.\n"
-                "Config values to be retrieved are "
-                f"{list(config.keys())}"
-            )
-
-        click.echo(config[get])
-        return
-
-    # check repositories
-    if git_repo:
-        git_repo = Path(git_repo).absolute()
-        if not os.path.exists(git_repo):
-            raise UsageError(
-                f"[Config] {git_repo} does not exist."
-                "Please provide path towards an existing git repository"
-                " or create a new one with sfgit init."
-            )
-    if save_dir:
-        save_dir = Path(save_dir).absolute()
-        # get git_repo
-        git_repo = Path(git_repo).absolute() if git_repo else REPO_PATH
-        if (
-            git_repo not in save_dir.parents
-            and git_repo != save_dir
-        ):
-            raise UsageError(
-                "[Config] "
-                f"{save_dir} is not a subdirectory of {git_repo}.\n"
-                "Please provide a saving directory within the git repository."
-            )
-
-    if git_repo:
-        dotenv.set_key(
-            dotenv_path,
-            key_to_set="SNOWFLAKE_VERSIONING_REPO",
-            value_to_set=str(git_repo),
-        )
-    if save_dir:
-        dotenv.set_key(
-            dotenv_path,
-            key_to_set="WORKSHEETS_PATH",
-            value_to_set=str(save_dir),
-        )
-    if account:
-        dotenv.set_key(
-            dotenv_path,
-            key_to_set="SF_ACCOUNT_ID",
-            value_to_set=account,
-        )
-    if username:
-        dotenv.set_key(
-            dotenv_path,
-            key_to_set="SF_LOGIN_NAME",
-            value_to_set=username,
-        )
-    if password:
-        dotenv.set_key(
-            dotenv_path,
-            key_to_set="SF_PWD",
-            value_to_set=password,
+        sf_git.commands.get_config_repo_procedure(get, click.echo)
+    else:
+        sf_git.commands.set_config_repo_procedure(
+            git_repo=git_repo,
+            save_dir=save_dir,
+            account=account,
+            username=username,
+            password=password,
+            logger=click.echo,
         )
 
 
@@ -237,61 +146,19 @@ def fetch_worksheets(
     Fetch worksheets from user Snowsight account and store them in cache.
     """
 
-    # Get auth parameters
-    click.echo(" ## Authenticating to Snowsight ##")
-    username = username or SF_LOGIN_NAME
-    if not username:
-        raise Exception("No username to authenticate with.")
+    username = username or config.GLOBAL_CONFIG.sf_login_name
+    account_id = account_id or config.GLOBAL_CONFIG.sf_account_id
+    password = password or config.GLOBAL_CONFIG.sf_pwd
 
-    account_id = account_id or SF_ACCOUNT_ID
-    if not account_id:
-        raise Exception("No account to authenticate with.")
-
-    if auth_mode:
-        if auth_mode == "SSO":
-            auth_mode = AuthenticationMode.SSO
-            password = None
-        elif auth_mode == "PWD":
-            auth_mode = AuthenticationMode.PWD
-            password = password or SF_PWD
-            if not password:
-                raise UsageError(
-                    "No password provided for PWD authentication mode."
-                    "Please provide one."
-                )
-        else:
-            raise UsageError(f"{auth_mode} is not supported.")
-    else:  # default
-        auth_mode = AuthenticationMode.PWD
-        password = password or SF_PWD
-        if not password:
-            raise UsageError(
-                "No password provided for PWD authentication mode."
-                "Please provide one."
-            )
-    click.echo(f"auth with {username} and {password}")
-    auth_context = authenticate_to_snowsight(
-        account_id, username, password, auth_mode=auth_mode
+    sf_git.commands.fetch_worksheets_procedure(
+        username=username,
+        account_id=account_id,
+        auth_mode=auth_mode,
+        password=password,
+        store=store,
+        only_folder=only_folder,
+        logger=click.echo,
     )
-
-    if auth_context.snowsight_token != "":
-        click.echo(f" ## Authenticated as {auth_context.username}##")
-    else:
-        click.echo(" ## Authentication failed ##")
-        exit(1)
-
-    click.echo(" ## Getting worksheets ##")
-    worksheets = sf_get_worksheets(
-        auth_context,
-        store_to_cache=store,
-        only_folder=only_folder
-    )
-
-    click.echo("## Got worksheets ##")
-    print_worksheets(worksheets)
-
-    if store:
-        click.echo("## Worksheets saved to cache ##")
 
 
 @click.command("commit")
@@ -302,52 +169,15 @@ def fetch_worksheets(
     help="Branch to commit to. Default is current.",
 )
 @click.option("--message", "-m", type=str, help="Commit message")
-@click.option(
-    "--username",
-    "-u",
-    type=str,
-    help="""User for which worksheets will be committed.
-        All users worksheets will be committed if not provided""",
-)
 def commit(
     branch: str,
     message: str,
-    username: str,
 ):
     """
     Commit Snowsight worksheets to Git repository.
     """
-    # Get git repo
-    try:
-        repo = git.Repo(REPO_PATH)
-    except git.InvalidGitRepositoryError:
-        raise Exception(f"Could not find Git Repository here : {REPO_PATH}")
 
-    # Get git branch
-    if branch:
-        available_branches = {b.name: b for b in repo.branches}
-        if branch not in available_branches.keys():
-            raise UsageError(f"Could not find branch {branch}")
-        branch = available_branches[branch]
-
-        # and checkout if necessary
-        if repo.active_branch.name != branch.name:
-            repo.head.reference = branch
-    else:
-        branch = repo.active_branch
-
-    # Add worksheets to staged files
-    repo.index.add(WORKSHEETS_PATH)
-
-    # Commit
-    if message:
-        commit_message = message
-    else:
-        commit_message = "[UPDATE] Snowflake worksheets"
-
-    repo.index.commit(message=commit_message)
-
-    click.echo(f"## Committed worksheets to branch {branch.name}")
+    sf_git.commands.commit_procedure(branch=branch, message=message, logger=click.echo)
 
 
 @click.command("push")
@@ -380,8 +210,12 @@ def commit(
     help="Only push worksheets with given folder name",
 )
 def push_worksheets(
-    username: str, account_id: str, auth_mode: str, password: str,
-    branch: str, only_folder: str,
+    username: str,
+    account_id: str,
+    auth_mode: str,
+    password: str,
+    branch: str,
+    only_folder: str,
 ):
     """
     Upload locally stored worksheets to Snowsight user workspace.
@@ -389,69 +223,19 @@ def push_worksheets(
     More flexibility to come.
     """
 
-    # Get auth parameters
-    click.echo(" ## Authenticating to Snowsight ##")
-    username = username or SF_LOGIN_NAME
-    if not username:
-        raise Exception("No username to authenticate with.")
-    account_id = account_id or SF_ACCOUNT_ID
-    if not account_id:
-        raise Exception("No account to authenticate with.")
+    username = username or config.GLOBAL_CONFIG.sf_login_name
+    account_id = account_id or config.GLOBAL_CONFIG.sf_account_id
+    password = password or config.GLOBAL_CONFIG.sf_pwd
 
-    if auth_mode:
-        if auth_mode == "SSO":
-            auth_mode = AuthenticationMode.SSO
-            password = None
-        elif auth_mode == "PWD":
-            auth_mode = AuthenticationMode.PWD
-            password = password or SF_PWD
-            if not password:
-                raise UsageError(
-                    "No password provided for PWD authentication mode."
-                    "Please provide one."
-                )
-        else:
-            raise UsageError(f"{auth_mode} is not supported.")
-    else:  # default
-        auth_mode = AuthenticationMode.PWD
-        password = password or SF_PWD
-        if not password:
-            raise UsageError(
-                "No password provided for PWD authentication mode."
-                "Please provide one."
-            )
-
-    auth_context = authenticate_to_snowsight(
-        account_id, username, password, auth_mode=auth_mode
-    )
-
-    if auth_context.snowsight_token != "":
-        click.echo(f" ## Authenticated as {auth_context.login_name}##")
-    else:
-        click.echo(" ## Authentication failed ##")
-        exit(1)
-
-    click.echo(f" ## Getting worksheets from cache for user {username} ##")
-    snowsight_username = auth_context.username
-    worksheets = load_worksheets_from_cache(
-        branch_name=branch,
+    sf_git.commands.push_worksheets_procedure(
+        username=username,
+        account_id=account_id,
+        auth_mode=auth_mode,
+        password=password,
+        branch=branch,
         only_folder=only_folder,
+        logger=click.echo,
     )
-
-    click.echo("## Got worksheets ##")
-    print_worksheets(worksheets)
-
-    click.echo("## Uploading to SnowSight ##")
-    worksheet_errors = upload_to_snowsight(auth_context, worksheets)
-    click.echo("## Uploaded to SnowSight ##")
-
-    if worksheet_errors is not None:
-        click.echo("Errors happened for the following worksheets :")
-        for err in worksheet_errors:
-            click.echo(
-                f"Name : {err['name']} "
-                f"| Error type : {err['error'].snowsight_error}"
-            )
 
 
 cli.add_command(init)

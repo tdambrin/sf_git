@@ -351,7 +351,7 @@ def upload_to_snowsight(
             worksheet_id = create_worksheet(auth_context, ws.name, folder_id)
             update_content = True
         else:
-            worksheet_id = ws._id
+            worksheet_id = ss_worksheets[ws.name]._id
             update_content = ws.content != ss_worksheets[ws.name].content
 
         # content management

@@ -259,10 +259,10 @@ def commit_procedure(branch: str, message: str, logger: Callable) -> str:
     # Get git repo
     try:
         repo = git.Repo(config.GLOBAL_CONFIG.repo_path)
-    except git.InvalidGitRepositoryError:
+    except git.InvalidGitRepositoryError as exc:
         raise SnowflakeGitError(
             f"Could not find Git Repository here : {config.GLOBAL_CONFIG.repo_path}"
-        )
+        ) from exc
 
     # Get git branch
     if branch:
@@ -356,10 +356,10 @@ def push_worksheets_procedure(
     # Get file content from git utils
     try:
         repo = git.Repo(config.GLOBAL_CONFIG.repo_path)
-    except git.InvalidGitRepositoryError:
+    except git.InvalidGitRepositoryError as exc:
         raise SnowflakeGitError(
             f"Could not find Git Repository here : {config.GLOBAL_CONFIG.repo_path}"
-        )
+        ) from exc
 
     logger(f" ## Getting worksheets from cache for user {username} ##")
     worksheets = load_worksheets_from_cache(

@@ -44,12 +44,12 @@ def get_tracked_files(
         folder_tree = next(
             obj for obj in repo_objects if obj.abspath == str(folder)
         )
-    except StopIteration:
+    except StopIteration as exc:
         raise SnowflakeGitError(
             f"Unable to retrieve folder {str(folder)}"
             f" in Repository {repo.working_dir} and branch {branch.name}."
             "Please check that the files you are looking for are committed"
-        )
+        ) from exc
 
     # get files
     tracked_files = folder_tree.traverse()

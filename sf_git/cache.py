@@ -36,7 +36,9 @@ def save_worksheets_to_cache(worksheets: List[Worksheet]):
             )
 
             # create folder if not exists
-            if not os.path.exists(config.GLOBAL_CONFIG.worksheets_path / folder_name):
+            if not os.path.exists(
+                config.GLOBAL_CONFIG.worksheets_path / folder_name
+            ):
                 os.mkdir(config.GLOBAL_CONFIG.worksheets_path / folder_name)
         else:
             file_name = f"{ws_name}.{extension}"
@@ -52,7 +54,9 @@ def save_worksheets_to_cache(worksheets: List[Worksheet]):
             "content_type": ws.content_type,
         }
         with open(
-            config.GLOBAL_CONFIG.worksheets_path / worksheet_metadata_file_name, "w"
+            config.GLOBAL_CONFIG.worksheets_path
+            / worksheet_metadata_file_name,
+            "w",
         ) as f:
             f.write(json.dumps(ws_metadata))
     print("[Worksheets] Saved")
@@ -80,7 +84,12 @@ def load_worksheets_from_cache(
             f"The folder {config.GLOBAL_CONFIG.worksheets_path} does not exist"
         )
 
-    tracked_files = [f for f in get_tracked_files(repo, config.GLOBAL_CONFIG.worksheets_path, branch_name)]
+    tracked_files = [
+        f
+        for f in get_tracked_files(
+            repo, config.GLOBAL_CONFIG.worksheets_path, branch_name
+        )
+    ]
 
     # filter on worksheet files
     ws_metadata_files = [
@@ -114,7 +123,9 @@ def load_worksheets_from_cache(
                 f for f in tracked_files if f.name == content_filename
             )
         except StopIteration:
-            print(f'{content_filename} not found in {[f.name for f in tracked_files]}')
+            print(
+                f"{content_filename} not found in {[f.name for f in tracked_files]}"
+            )
             return []
 
         ws_content_as_dict = get_blobs_content([content_blob])

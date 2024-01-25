@@ -17,7 +17,7 @@ from sf_git.models import (
 def get_worksheets(
     auth_context: AuthenticationContext,
     store_to_cache: Optional[bool] = False,
-    only_folder: Optional[str] = None
+    only_folder: Optional[str] = None,
 ) -> List[Worksheet]:
     """
     Get list of worksheets available for authenticated user
@@ -63,8 +63,10 @@ def get_worksheets(
 
     worksheets = []
     for worksheet in entities:
-        if only_folder is not None \
-                and worksheet["info"]["folderName"] != only_folder:
+        if (
+            only_folder is not None
+            and worksheet["info"]["folderName"] != only_folder
+        ):
             continue
         if worksheet["entityType"] == "query":
             current_ws = Worksheet(
@@ -89,9 +91,7 @@ def get_worksheets(
 
 
 def print_worksheets(
-    worksheets: List[Worksheet],
-    n=10,
-    logger: Callable = print
+    worksheets: List[Worksheet], n=10, logger: Callable = print
 ):
     """
     Log worksheets as a dataframe.
@@ -306,10 +306,7 @@ def upload_to_snowsight(
     :returns: upload report with {'completed': list, 'errors': list}
     """
 
-    upload_report = {
-        "completed": [],
-        "errors": []
-    }
+    upload_report = {"completed": [], "errors": []}
 
     ss_folders = get_folders(auth_context)
     ss_folders = {folder.name: folder for folder in ss_folders}
@@ -355,9 +352,9 @@ def upload_to_snowsight(
                 ),
             )
             if err is not None:
-                upload_report['errors'].append({"name": ws.name, "error": err})
+                upload_report["errors"].append({"name": ws.name, "error": err})
             else:
-                upload_report['completed'].append({'name': ws.name})
+                upload_report["completed"].append({"name": ws.name})
 
     print(" ## SnowSight updated ##")
     return upload_report

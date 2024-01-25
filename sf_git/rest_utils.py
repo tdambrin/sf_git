@@ -136,6 +136,4 @@ def start_browser(url: str):
     elif platform.system() == "Darwin":
         subprocess.Popen(["open", url])
     else:
-        raise NotImplementedError(
-            f"Unsupported platform: {platform.system()}"
-        )
+        raise NotImplementedError(f"Unsupported platform: {platform.system()}")

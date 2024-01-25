@@ -8,9 +8,7 @@ from sf_git.models import SnowflakeGitError
 
 
 def get_tracked_files(
-    repo: Repo,
-    folder: Path,
-    branch_name: Optional[str] = None
+    repo: Repo, folder: Path, branch_name: Optional[str] = None
 ) -> List[Union[Type[Blob], Type[Tree]]]:
     """
     Get all git tracked files in a folder inside a git repo

@@ -114,6 +114,7 @@ class SnowflakeGitError(Exception):
     """
     Custom Exception for sf_git specific raised exceptions
     """
+
     def __init__(self, *args):
         if args:
             self.message = args[0]

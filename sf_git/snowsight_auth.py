@@ -29,7 +29,6 @@ def authenticate_to_snowsight(
     password: str,
     auth_mode: AuthenticationMode = AuthenticationMode.PWD,
 ) -> AuthenticationContext:
-
     auth_context = AuthenticationContext()
     auth_context.main_app_url = config.GLOBAL_CONFIG.sf_main_app_url
     auth_context.account_name = account_name
@@ -236,7 +235,7 @@ def oauth_start_get_snowsight_client_id_in_deployment(
 
     response = requests.get(
         f"{app_server_url}/{rest_api_url}",
-        headers={'Accept': 'text/html'},
+        headers={"Accept": "text/html"},
         allow_redirects=True,
     )
 

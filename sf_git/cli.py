@@ -31,10 +31,8 @@ def init(path: str, mkdir: bool):
     """
 
     from sf_git.commands import init_repo_procedure
-    init_repo_procedure(
-        path=path,
-        mkdir=mkdir
-    )
+
+    init_repo_procedure(path=path, mkdir=mkdir)
 
 
 @click.command("config")
@@ -94,7 +92,10 @@ def config_repo(
     Git_repo configuration is mandatory.
     """
 
-    from sf_git.commands import get_config_repo_procedure, set_config_repo_procedure
+    from sf_git.commands import (
+        get_config_repo_procedure,
+        set_config_repo_procedure,
+    )
 
     if get:
         get_config_repo_procedure(get, click.echo)
@@ -152,6 +153,7 @@ def fetch_worksheets(
     """
 
     from sf_git.commands import fetch_worksheets_procedure
+
     username = username or config.GLOBAL_CONFIG.sf_login_name
     account_id = account_id or config.GLOBAL_CONFIG.sf_account_id
     password = password or config.GLOBAL_CONFIG.sf_pwd
@@ -163,7 +165,7 @@ def fetch_worksheets(
         password=password,
         store=store,
         only_folder=only_folder,
-        logger=click.echo
+        logger=click.echo,
     )
 
 
@@ -184,11 +186,8 @@ def commit(
     """
 
     from sf_git.commands import commit_procedure
-    commit_procedure(
-        branch=branch,
-        message=message,
-        logger=click.echo
-    )
+
+    commit_procedure(branch=branch, message=message, logger=click.echo)
 
 
 @click.command("push")
@@ -235,6 +234,7 @@ def push_worksheets(
     """
 
     from sf_git.commands import push_worksheets_procedure
+
     username = username or config.GLOBAL_CONFIG.sf_login_name
     account_id = account_id or config.GLOBAL_CONFIG.sf_account_id
     password = password or config.GLOBAL_CONFIG.sf_pwd
@@ -246,7 +246,7 @@ def push_worksheets(
         password=password,
         branch=branch,
         only_folder=only_folder,
-        logger=click.echo
+        logger=click.echo,
     )
 
 

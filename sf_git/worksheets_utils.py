@@ -77,10 +77,21 @@ def get_worksheets(
                 content_type=worksheet["info"]["queryLanguage"],
             )
             worksheets.append(current_ws)
+
     for i, _ in enumerate(worksheets):
         content = contents[worksheets[i]._id]
         if "query" in content.keys():
             worksheets[i].content = content["query"]
+        elif "drafts" in content.keys():
+            draft_ids = [draft_id for draft_id in content["drafts"].keys()]
+            if len(draft_ids) > 0:
+                if len(draft_ids) > 1:  # keys are timestamps
+                    last_update_id = str(max([int(draft_id) for draft_id in draft_ids]))
+                else:
+                    last_update_id = draft_ids[0]
+                worksheets[i].content = content["drafts"][last_update_id]["query"]
+            else:
+                worksheets[i].content = ""
         else:
             worksheets[i].content = ""
 

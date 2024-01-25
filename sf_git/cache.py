@@ -115,7 +115,7 @@ def load_worksheets_from_cache(
             )
         except StopIteration:
             print(f'{content_filename} not found in {[f.name for f in tracked_files]}')
-            # FixMe
+            return []
 
         ws_content_as_dict = get_blobs_content([content_blob])
         ws_content = list(ws_content_as_dict.values())[0]

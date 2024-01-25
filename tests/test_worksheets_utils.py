@@ -77,7 +77,7 @@ def mock_all_write_to_snowsight(monkeypatch):
     )
 
 
-def test_get_worksheets_when_one(
+def test_get_worksheets_when_two(
     mock_api, get_worksheets_api_response_with_worksheets, auth_context
 ):
     mock_api.post(
@@ -92,10 +92,10 @@ def test_get_worksheets_when_one(
     )
 
     assert isinstance(worksheets, list)
-    assert len(worksheets) == 1
+    assert len(worksheets) == 2
 
 
-def test_get_folders_when_one(
+def test_get_folders_when_two(
     mock_api, get_worksheets_api_response_with_worksheets, auth_context
 ):
     mock_api.post(
@@ -109,7 +109,7 @@ def test_get_folders_when_one(
     )
 
     assert isinstance(folders, list)
-    assert len(folders) == 1
+    assert len(folders) == 2
 
 
 def test_get_worksheets_when_none(

@@ -63,5 +63,70 @@
             }
         ],
         "hasRequiredRole": true
+    },
+    "1EDjP07epDt": {
+        "draftUpdates": {
+            "147276799089": 1706161972435
+        },
+        "drafts": {
+            "147276799089": {
+                "appSessionId": 0,
+                "executionContext": {
+                    "database": "",
+                    "role": "ACCOUNTADMIN",
+                    "schema": "",
+                    "secondaryRoles": "",
+                    "warehouse": ""
+                },
+                "paramRefs": [],
+                "query": "SELECT COUNT(*) from pytests;",
+                "queryLanguage": "sql",
+                "queryRange": null
+            }
+        },
+        "editable": true,
+        "executionContext": {
+            "database": "",
+            "role": "ACCOUNTADMIN",
+            "schema": "",
+            "secondaryRoles": "",
+            "warehouse": ""
+        },
+        "folderId": "YPegqcHt",
+        "hasRequiredRole": true,
+        "isParamQuery": false,
+        "members": [
+            {
+                "hasRole": true,
+                "memberId": "fake",
+                "memberType": "user",
+                "role": "owner",
+                "userId": "fake"
+            }
+        ],
+        "modified": "2024-01-25T05:52:52.471755Z",
+        "name": "[Tutorial] Sample queries on TPC-DS data",
+        "orgId": "fake",
+        "ownerId": "fake",
+        "pid": "1EDjP07epDt",
+        "projectType": "query",
+        "queryContext": {
+            "database": "",
+            "role": "ACCOUNTADMIN",
+            "schema": "",
+            "secondaryRoles": "",
+            "warehouse": ""
+        },
+        "queryLanguage": "sql",
+        "resultsViewable": true,
+        "runnable": true,
+        "slug": "fake",
+        "snowflakeQueryId": "",
+        "snowflakeRequestId": "",
+        "startDate": "2024-01-25T04:25:49.861694096Z",
+        "transforms": [],
+        "url": "/fake#query",
+        "version": 1,
+        "visibility": "private"
     }
 }

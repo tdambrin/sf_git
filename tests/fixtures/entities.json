@@ -24,26 +24,74 @@
     "match": null
 },
 {
-        "entityId": "Ga8xhnsR",
-        "entityType": "folder",
-        "info": {
-            "name": "Getting Started Tutorials",
-            "slug": "getting-started-tutorials-fGa8xhnsR",
-            "version": 0,
-            "content": "",
-            "dashboardRows": [],
-            "folderId": null,
-            "folderName": "",
-            "folderType": "list",
-            "visibility": "private",
-            "ownerId": 0,
-            "modified": "2024-01-23T00:56:39.139336Z",
-            "created": "2024-01-23T00:56:39.139336Z",
-            "viewed": null,
-            "queryLanguage": "",
-            "role": "ACCOUNTADMIN",
-            "url": "/mocked"
-        },
-        "match": null
-    }
+    "entityId": "Ga8xhnsR",
+    "entityType": "folder",
+    "info": {
+        "name": "Getting Started Tutorials",
+        "slug": "getting-started-tutorials-fGa8xhnsR",
+        "version": 0,
+        "content": "",
+        "dashboardRows": [],
+        "folderId": null,
+        "folderName": "",
+        "folderType": "list",
+        "visibility": "private",
+        "ownerId": 0,
+        "modified": "2024-01-23T00:56:39.139336Z",
+        "created": "2024-01-23T00:56:39.139336Z",
+        "viewed": null,
+        "queryLanguage": "",
+        "role": "ACCOUNTADMIN",
+        "url": "/mocked"
+    },
+    "match": null
+},
+{
+    "entityId": "1EDjP07epDt",
+    "entityType": "query",
+    "info": {
+        "content": "",
+        "created": "2024-01-25T04:25:49.858888Z",
+        "dashboardRows": [],
+        "folderId": "YPegqcHt",
+        "folderName": "Benchmarking Tutorials",
+        "folderSlug": "benchmarking-tutorials-fYPegqcHt",
+        "folderType": "list",
+        "folderUrl": "/fake/#/benchmarking-tutorials-fYPegqcHt",
+        "modified": "2024-01-25T05:52:52.471755Z",
+        "name": "[Tutorial] Sample queries on TPC-DS data",
+        "ownerId": 0,
+        "queryLanguage": "sql",
+        "role": "ACCOUNTADMIN",
+        "slug": "fake",
+        "url": "/fake#query",
+        "version": 0,
+        "viewed": "2024-01-25T05:03:28.247018Z",
+        "visibility": "private"
+    },
+    "match": null
+},
+{
+    "entityId": "YPegqcHt",
+    "entityType": "folder",
+    "info": {
+        "content": "",
+        "created": "2024-01-25T04:25:49.140711Z",
+        "dashboardRows": [],
+        "folderId": null,
+        "folderName": "",
+        "folderType": "list",
+        "modified": "2024-01-25T04:25:49.140711Z",
+        "name": "Benchmarking Tutorials",
+        "ownerId": 0,
+        "queryLanguage": "",
+        "role": "ACCOUNTADMIN",
+        "slug": "benchmarking-tutorials-fYPegqcHt",
+        "url": "/fake/#/benchmarking-tutorials-fYPegqcHt",
+        "version": 0,
+        "viewed": null,
+        "visibility": "private"
+    },
+    "match": null
+}
 ]

@@ -34,13 +34,15 @@ jobs:
           coverage run -m pytest tests -v -s
       - name: Generate Coverage Report
         run: |  
-          coverage report -m
-      - name: Upload coverage data
-        uses: actions/upload-artifact@v3
-        with:
-          name: "coverage-data"
-          path: .coverage.*
-          if-no-files-found: ignore
+          REPORT="$(coverage report -m | tail -1)"
+          COV_TOTAL="$(echo $REPORT | tail -c 5 | sed 's/ //g' | sed 's/%//g')"
+          echo "COVERAGE=$COV_TOTAL" >> $GITHUB_ENV
+      # - name: Upload coverage data
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: "coverage-data"
+      #     path: .coverage.*
+      #     if-no-files-found: ignore
       - name: Extract branch name
         shell: bash
         run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
@@ -51,8 +53,8 @@ jobs:
           auth: ${{ secrets.GIST_TOKEN }}
           gistID: e2c293d7db07bee70d2845387cb133ff
           filename: sf_git_${{ steps.extract_branch.outputs.branch }}.json
-          label: Coverage
-          message: ${{ env.total }}%
+          label: sf_git coverage
+          message: ${{ env.COVERAGE }}%
           minColorRange: 50
           maxColorRange: 90
-          valColorRange: ${{ env.total }}
+          valColorRange: ${{ env.COVERAGE }}

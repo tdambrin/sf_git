@@ -123,8 +123,9 @@ def load_worksheets_from_cache(
                 f for f in tracked_files if f.name == content_filename
             )
         except StopIteration:
+            tracked_files = [f.name for f in tracked_files]
             print(
-                f"{content_filename} not found in {[f.name for f in tracked_files]}"
+                f"{content_filename} not found in {tracked_files}"
             )
             return []
 

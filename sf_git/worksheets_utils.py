@@ -86,10 +86,14 @@ def get_worksheets(
             draft_ids = [draft_id for draft_id in content["drafts"].keys()]
             if len(draft_ids) > 0:
                 if len(draft_ids) > 1:  # keys are timestamps
-                    last_update_id = str(max([int(draft_id) for draft_id in draft_ids]))
+                    last_update_id = str(
+                        max([int(draft_id) for draft_id in draft_ids])
+                    )
                 else:
                     last_update_id = draft_ids[0]
-                worksheets[i].content = content["drafts"][last_update_id]["query"]
+                worksheets[i].content = content["drafts"][last_update_id][
+                    "query"
+                ]
             else:
                 worksheets[i].content = ""
         else:

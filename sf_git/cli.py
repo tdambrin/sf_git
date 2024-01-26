@@ -177,7 +177,9 @@ def commit(
     Commit Snowsight worksheets to Git repository.
     """
 
-    sf_git.commands.commit_procedure(branch=branch, message=message, logger=click.echo)
+    sf_git.commands.commit_procedure(
+        branch=branch, message=message, logger=click.echo
+    )
 
 
 @click.command("push")

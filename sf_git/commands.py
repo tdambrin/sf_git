@@ -194,7 +194,7 @@ def fetch_worksheets_procedure(
     :param logger: logging function e.g. print
 
     :returns: list of fetched worksheets
-    """
+    """  # noqa: E501
 
     # Get auth parameters
     logger(" ## Authenticating to Snowsight ##")
@@ -239,8 +239,9 @@ def fetch_worksheets_procedure(
     print_worksheets(worksheets, logger=logger)
 
     if store and worksheets:
+        worksheet_path = dotenv.get_key(DOTENV_PATH, 'WORKSHEETS_PATH')
         logger(
-            f"## Worksheets saved to {dotenv.get_key(DOTENV_PATH, 'WORKSHEETS_PATH')} ##"
+            f"## Worksheets saved to {worksheet_path} ##"
         )
 
     return worksheets
@@ -261,7 +262,8 @@ def commit_procedure(branch: str, message: str, logger: Callable) -> str:
         repo = git.Repo(config.GLOBAL_CONFIG.repo_path)
     except git.InvalidGitRepositoryError as exc:
         raise SnowflakeGitError(
-            f"Could not find Git Repository here : {config.GLOBAL_CONFIG.repo_path}"
+            "Could not find Git Repository here : "
+            f"{config.GLOBAL_CONFIG.repo_path}"
         ) from exc
 
     # Get git branch
@@ -314,7 +316,7 @@ def push_worksheets_procedure(
     :param logger: logging function e.g. print
 
     :returns: upload report with success and errors per worksheet
-    """
+    """  # noqa: E501
     # Get auth parameters
     logger(" ## Authenticating to Snowsight ##")
     if not username:
@@ -358,7 +360,8 @@ def push_worksheets_procedure(
         repo = git.Repo(config.GLOBAL_CONFIG.repo_path)
     except git.InvalidGitRepositoryError as exc:
         raise SnowflakeGitError(
-            f"Could not find Git Repository here : {config.GLOBAL_CONFIG.repo_path}"
+            "Could not find Git Repository here : "
+            f"{config.GLOBAL_CONFIG.repo_path}"
         ) from exc
 
     logger(f" ## Getting worksheets from cache for user {username} ##")

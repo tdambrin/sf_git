@@ -20,6 +20,9 @@ jobs:
           python -m pip install --upgrade pip  
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements.test.txt ]; then pip install -r requirements.test.txt; fi
+      - name: print git version
+        run: |
+          git --version
       - name: Lint with Ruff
         run: |  
           pip install flake8  

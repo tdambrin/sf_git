@@ -5,6 +5,7 @@ on: workflow_dispatch
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: pytest
     strategy:
       matrix:
         python-version: ["3.10"]
@@ -34,3 +35,20 @@ jobs:
       - name: Generate Coverage Report
         run: |  
           coverage report -m
+      - name: Upload coverage data
+        uses: actions/upload-artifact@v3
+        with:
+          name: "coverage-data"
+          path: .coverage.*
+          if-no-files-found: ignore
+      - name: Create badge
+        uses: schneegans/dynamic-badges-action@v1.6.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: e2c293d7db07bee70d2845387cb133ff
+          filename: sf__git__${{ env.BRANCH }}.json
+          label: Coverage
+          message: ${{ env.total }}%
+          minColorRange: 50
+          maxColorRange: 90
+          valColorRange: ${{ env.total }}

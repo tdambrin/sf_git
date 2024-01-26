@@ -31,7 +31,7 @@ $ pyenv activate sf
 
 # [Mandatory: Pip install]
 $ pip install -U pip
-$ pip install sf_git>=1.3
+$ pip install sf_git==1.3.1
 
 # [Check your installation]
 $ sfgit --help
@@ -68,7 +68,7 @@ First, set git repository to be used:
 $ sfgit config --git-repo <path_to_git_repo>
 
 # if you want to create a new one 
-$ sfgit init <path_to_git_repo>
+$ sfgit init -p <path_to_git_repo>
 ```
 
 Then, set a location to save your worksheets within this git repository:
@@ -98,7 +98,7 @@ $ sfgit fetch -username tdambrin -account-id my_account.west-europe.azure --auth
 
 **Commit you worksheets** (or through git commands for more flexibility) :
 ```bash
-$ sfgit commit --branch master -m "Initial worksheet commit" -username tdambrin
+$ sfgit commit --branch master -m "Initial worksheet commit"
 ```
 
 **Export user worksheets to Snowsight** :

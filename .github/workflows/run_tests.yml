@@ -20,9 +20,9 @@ jobs:
           python -m pip install --upgrade pip  
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements.test.txt ]; then pip install -r requirements.test.txt; fi
-      - name: print git version
+      - name: set git default branch to main
         run: |
-          git --version
+          git config --global init.defaultBranch main
       - name: Lint with Ruff
         run: |  
           pip install flake8  

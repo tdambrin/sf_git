@@ -1,6 +1,8 @@
 ![image](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
 [![image](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:thomas.dambrin@gmail.com?subject=[GitHub]%20Snowflake%20Git%20Versioning)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/tdambrin/e2c293d7db07bee70d2845387cb133ff/raw/sf_git_ci_cov-badge.json)
+
 
 
 # Snowflake Git

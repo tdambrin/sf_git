@@ -41,12 +41,16 @@ jobs:
           name: "coverage-data"
           path: .coverage.*
           if-no-files-found: ignore
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
       - name: Create badge
         uses: schneegans/dynamic-badges-action@v1.6.0
         with:
           auth: ${{ secrets.GIST_TOKEN }}
           gistID: e2c293d7db07bee70d2845387cb133ff
-          filename: sf__git__${{ env.BRANCH }}.json
+          filename: sf_git_${{ steps.extract_branch.outputs.branch }}.json
           label: Coverage
           message: ${{ env.total }}%
           minColorRange: 50

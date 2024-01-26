@@ -240,6 +240,13 @@ def push_worksheets(
     )
 
 
+@click.group()
+@click.version_option(sf_git.__version__)
+@click.pass_context
+def cli(ctx):
+    pass
+
+
 cli.add_command(init)
 cli.add_command(config_repo)
 cli.add_command(fetch_worksheets)

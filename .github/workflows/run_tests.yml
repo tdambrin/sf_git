@@ -3,7 +3,7 @@ name: Run Unit Test via Pytest
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 jobs:

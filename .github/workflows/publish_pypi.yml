@@ -3,7 +3,7 @@ name: Publish to PyPI and TestPyPi
 on: 
   push:
     branches:
-      - master
+      - releases
   workflow_dispatch:
 
 jobs:

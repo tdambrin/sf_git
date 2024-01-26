@@ -1,3 +1,8 @@
+<p align="center">
+  <img src="https://github.com/tdambrin/sf_git/assets/61944454/0b162d44-cb65-4e12-8b01-8f3b9782eaae" alt="sfgit logo" width="30%">
+</p>
+
+
 ![image](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
 [![image](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:thomas.dambrin@gmail.com?subject=[GitHub]%20Snowflake%20Git%20Versioning)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

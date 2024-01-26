@@ -1,10 +1,15 @@
 name: Run Unit Test via Pytest
 
-on: workflow_dispatch
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: pytest
     strategy:
       matrix:
         python-version: ["3.10"]
@@ -33,4 +38,32 @@ jobs:
           coverage run -m pytest tests -v -s
       - name: Generate Coverage Report
         run: |  
-          coverage report -m
+          REPORT="$(coverage report -m | tail -1)"
+          COV_TOTAL="$(echo $REPORT | tail -c 5 | sed 's/ //g' | sed 's/%//g')"
+          echo "COVERAGE=$COV_TOTAL" >> $GITHUB_ENV
+      # - name: Upload coverage data
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: "coverage-data"
+      #     path: .coverage.*
+      #     if-no-files-found: ignore
+      # - name: Extract branch name
+      #   shell: bash
+      #   run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+      #   id: extract_branch
+      - name: Format branch name for cov badge
+        shell: bash
+        run: |
+          BRANCH_NAME="$(echo ${GITHUB_REF_NAME} | sed 's/\//_/g')"
+          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
+      - name: Create badge
+        uses: schneegans/dynamic-badges-action@v1.6.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: e2c293d7db07bee70d2845387cb133ff
+          filename: sf_git_${{ env.BRANCH_NAME }}.json
+          label: sf_git coverage
+          message: ${{ env.COVERAGE }}%
+          minColorRange: 50
+          maxColorRange: 90
+          valColorRange: ${{ env.COVERAGE }}

@@ -6,3 +6,7 @@ omit =
     sf_git/snowsight_auth.py
     sf_git/rest_utils.py
 disable_warnings = no-data-collected
+branch = True
+
+[html]
+directory = coverage_html_report

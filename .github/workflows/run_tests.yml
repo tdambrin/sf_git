@@ -61,7 +61,7 @@ jobs:
         with:
           auth: ${{ secrets.GIST_TOKEN }}
           gistID: e2c293d7db07bee70d2845387cb133ff
-          filename: sf_git_${{ env.BRANCH_NAME }}.json
+          filename: sf_git_${{ env.BRANCH_NAME }}_cov_badge.json
           label: sf_git coverage
           message: ${{ env.COVERAGE }}%
           minColorRange: 50

@@ -93,6 +93,31 @@ $ sfgit config --username <your_snowsight_login_name>
 $ sfgit config --password <your_snowsight_password>  # unnecessary for SSO authentication mode
 ```
 
+### Account ID
+
+> [!WARNING]  
+> `The account ID to be configured is in the <account_name>.<region>.<cloud> format.`
+
+If you are unsure about how to retrieve it for your snowflake account, you can run this query:
+
+```sql
+SHOW REGIONS;
+
+WITH 
+    SF_REGIONS AS (SELECT * FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))),
+    INFOS AS (SELECT CURRENT_REGION() AS CR, CURRENT_ACCOUNT() AS CA)
+SELECT CONCAT(
+        LOWER(INFOS.CA),
+        '.',
+        SF_REGIONS."region",
+        '.',
+        SF_REGIONS."cloud"
+    ) AS account_id
+FROM INFOS LEFT JOIN SF_REGIONS ON INFOS.CR = SF_REGIONS."snowflake_region";
+
+```
+
+
 ## Usage
 
 **Import user worksheet locally** :

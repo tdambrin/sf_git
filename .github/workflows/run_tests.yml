@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'sf_git/**.py'
   workflow_dispatch:
 
 jobs:

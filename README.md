@@ -138,6 +138,21 @@ $ sfgit commit --branch master -m "Initial worksheet commit"
 $ sfgit push --auth-mode SSO --branch master
 ```
 
+## Be creative
+
+Use the package to fit your use case, versioning is a way to do many things.
+
+### Switch versions
+
+<div align="center">
+    <img src="./doc/images/switch_versions.png" alt="Switch versions" width="70%"/>
+</div>
+
+
+### Transfer worksheets to another account
+
+![Transfer accounts](./doc/images/transfer_accounts.png)
+
 ## Policies
 Feedbacks and contributions are greatly appreciated. This package was made to ease every day life for Snowflake 
 developers and promote version control as much as possible.

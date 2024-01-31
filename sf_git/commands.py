@@ -99,7 +99,7 @@ def set_config_repo_procedure(
     # check repositories
     if git_repo:
         repo_path = Path(git_repo).absolute()
-        if not os.path.exists(git_repo):
+        if not os.path.exists(repo_path):
             raise UsageError(
                 f"[Config] {git_repo} does not exist."
                 "Please provide path towards an existing git repository"
@@ -219,7 +219,7 @@ def fetch_worksheets_procedure(
                 "No password provided for PWD authentication mode."
                 "Please provide one."
             )
-    logger(f"auth with {username} and {password}")
+    logger(f" ## Password authentication with username={username} ##")
     auth_context = authenticate_to_snowsight(
         account_id, username, password, auth_mode=auth_mode
     )
@@ -317,6 +317,7 @@ def push_worksheets_procedure(
 
     :returns: upload report with success and errors per worksheet
     """  # noqa: E501
+
     # Get auth parameters
     logger(" ## Authenticating to Snowsight ##")
     if not username:

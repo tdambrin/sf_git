@@ -83,9 +83,6 @@ $ sfgit config --save-dir <path_to_worksheets_persistency_directory>
 ## Authentication
 Currently, two authentication modes are supported i.e. credentials (PWD) and single sign-on (SSO).
 
-> [!WARNING]  
-> `The SSO authentication mode is currently being tested as it seems to behave differently for different accounts.`
-
 Commands requiring Snowsight authentication all have options to provide at command time. 
 If you don't want to manually input them everytime, you can set them at Python/Virtual environement level with :
 
@@ -119,6 +116,9 @@ SELECT CONCAT(
 FROM INFOS LEFT JOIN SF_REGIONS ON INFOS.CR = SF_REGIONS."snowflake_region";
 
 ```
+
+Unfortunately, the _region_ is not always the same in the _SHOW REGIONS_ ouput. Please check and adapt the format comforming to the official [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier#non-vps-account-locator-formats-by-cloud-platform-and-region).
+For example, eastus2 for Azure should actually be east-us-2.
 
 
 ## Usage

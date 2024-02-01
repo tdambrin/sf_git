@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import List, Type, Union, Dict, Optional
 
+import git
 from git.objects.blob import Blob
 from git.objects.tree import Tree
 from git.repo.base import Repo
@@ -67,3 +68,28 @@ def get_blobs_content(blobs: List[Blob]) -> Dict[str, bytes]:
         b.name: b.data_stream.read() for b in blobs if isinstance(b, Blob)
     }
     return contents
+
+
+def diff(
+        repo: git.Repo,
+        subdirectory: Union[str, Path] = None,
+        file_extensions: Union[str, List[str]] = None
+) -> str:
+    """
+    Get git diff output with subdirectory and file extension filters
+
+    :param repo: git repository
+    :param subdirectory: only on files within this subdirectory
+    :param file_extensions: only match files with these extensions
+
+    :returns: str, git diff output
+    """
+    # Check input
+
+    # Get blobs
+
+    # Get git diff output
+
+    # Add coloring
+
+    return "ToDo"

@@ -85,11 +85,34 @@ def diff(
     :returns: str, git diff output
     """
     # Check input
+    if subdirectory and isinstance(subdirectory, str):
+        subdirectory = Path(subdirectory)
+    if file_extensions and isinstance(file_extensions, str):
+        file_extensions = [file_extensions]
 
     # Get blobs
+    search_path = subdirectory if subdirectory else Path(repo.git.rev_parse("--show-toplevel"))
+    globs = []
+    if not file_extensions:
+        globs.extend(search_path.glob("**/*"))
+    else:
+        for extension in file_extensions:
+            globs.extend(list(search_path.glob(f'**/*.{extension}')))
 
     # Get git diff output
+    if not globs:
+        return ""
 
+    diff_output = repo.git.diff(globs)
     # Add coloring
+    raw_lines = diff_output.split('\n')
+    colored_lines = []
+    for line in raw_lines:
+        if line.startswith("-"):
+            colored_lines.append("\033[{}m{}\033[0m".format(32, line))
+        elif line.startswith("+"):
+            colored_lines.append("\033[{}m{}\033[0m".format(31, line))
+        else:
+            colored_lines.append(line)
 
-    return "ToDo"
+    return "\n".join(colored_lines)

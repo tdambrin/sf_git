@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import List, Type, Union, Dict, Optional
+import re
 
 import git
 from git.objects.blob import Blob
@@ -71,9 +72,9 @@ def get_blobs_content(blobs: List[Blob]) -> Dict[str, bytes]:
 
 
 def diff(
-        repo: git.Repo,
-        subdirectory: Union[str, Path] = None,
-        file_extensions: Union[str, List[str]] = None
+    repo: git.Repo,
+    subdirectory: Union[str, Path] = None,
+    file_extensions: Union[str, List[str]] = None,
 ) -> str:
     """
     Get git diff output with subdirectory and file extension filters
@@ -91,28 +92,36 @@ def diff(
         file_extensions = [file_extensions]
 
     # Get blobs
-    search_path = subdirectory if subdirectory else Path(repo.git.rev_parse("--show-toplevel"))
+    search_path = (
+        subdirectory
+        if subdirectory
+        else Path(repo.git.rev_parse("--show-toplevel"))
+    )
     globs = []
     if not file_extensions:
         globs.extend(search_path.glob("**/*"))
     else:
         for extension in file_extensions:
-            globs.extend(list(search_path.glob(f'**/*.{extension}')))
+            globs.extend(list(search_path.glob(f"**/*.{extension}")))
 
     # Get git diff output
     if not globs:
         return ""
 
     diff_output = repo.git.diff(globs)
-    # Add coloring
-    raw_lines = diff_output.split('\n')
-    colored_lines = []
-    for line in raw_lines:
-        if line.startswith("-"):
-            colored_lines.append("\033[{}m{}\033[0m".format(32, line))
-        elif line.startswith("+"):
-            colored_lines.append("\033[{}m{}\033[0m".format(31, line))
-        else:
-            colored_lines.append(line)
 
-    return "\n".join(colored_lines)
+    # Add coloring
+    diff_output = re.sub(
+        r"^(\++)(.*?)$",
+        "\033[32m\\1\\2\033[0m",
+        diff_output,
+        flags=re.MULTILINE,
+    )
+    diff_output = re.sub(
+        r"^(-+)(.*?)$",
+        "\033[31m\\1\\2\033[0m",
+        diff_output,
+        flags=re.MULTILINE,
+    )
+
+    return diff_output

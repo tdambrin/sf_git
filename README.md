@@ -11,6 +11,8 @@
 
 # Snowflake Git
 
+🆕 Now supported in Snowflake, see the [official documentation](https://docs.snowflake.com/en/developer-guide/git/git-overview).
+
 # Worksheet Versioning
 
 Inspired by a snowflake developers maintained [repository](https://github.com/Snowflake-Labs/sfsnowsightextensions).

@@ -127,7 +127,7 @@ For example, eastus2 for Azure should actually be east-us-2.
 
 **Import user worksheet locally** :
 ```bash
-$ sfgit fetch -username tdambrin -account-id my_account.west-europe.azure --auth-mode SSO
+$ sfgit fetch --username tdambrin --account-id my_account.west-europe.azure --auth-mode SSO
 ```
 
 **Commit you worksheets** (or through git commands for more flexibility) :

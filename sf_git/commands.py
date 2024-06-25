@@ -16,6 +16,7 @@ from sf_git.worksheets_utils import (
     print_worksheets,
     upload_to_snowsight,
 )
+from sf_git.git_utils import diff
 from sf_git import DOTENV_PATH
 
 
@@ -239,10 +240,8 @@ def fetch_worksheets_procedure(
     print_worksheets(worksheets, logger=logger)
 
     if store and worksheets:
-        worksheet_path = dotenv.get_key(DOTENV_PATH, 'WORKSHEETS_PATH')
-        logger(
-            f"## Worksheets saved to {worksheet_path} ##"
-        )
+        worksheet_path = dotenv.get_key(DOTENV_PATH, "WORKSHEETS_PATH")
+        logger(f"## Worksheets saved to {worksheet_path} ##")
 
     return worksheets
 
@@ -389,3 +388,36 @@ def push_worksheets_procedure(
             )
 
     return upload_report
+
+
+def diff_procedure(logger: Callable = print) -> str:
+    """
+    Displays unstaged changes on worksheets for configured repository and worksheets path.
+
+    :param logger: logging function e.g. print
+
+    :returns: diff output as a string
+    """  # noqa: E501
+
+    # Get configuration
+    try:
+        repo = git.Repo(config.GLOBAL_CONFIG.repo_path)
+    except git.InvalidGitRepositoryError as exc:
+        raise SnowflakeGitError(
+            "Could not find Git Repository here : "
+            f"{config.GLOBAL_CONFIG.repo_path}"
+        ) from exc
+
+    worksheets_path = config.GLOBAL_CONFIG.worksheets_path
+    if not os.path.exists(worksheets_path):
+        raise SnowflakeGitError(
+            "Worksheets path is not set or the folder doesn't exist. "
+            "Please set it or create it (manually or with sfgit fetch"
+        )
+
+    diff_output = diff(
+        repo, subdirectory=worksheets_path, file_extensions=["py", "sql"]
+    )
+    logger(diff_output)
+
+    return diff_output

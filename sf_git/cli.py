@@ -240,6 +240,15 @@ def push_worksheets(
     )
 
 
+@click.command("diff")
+def diff():
+    """
+    Displays unstaged changes on worksheets
+    """
+
+    sf_git.commands.diff_procedure(logger=click.echo)
+
+
 @click.group()
 @click.version_option(sf_git.__version__)
 @click.pass_context
@@ -252,6 +261,7 @@ cli.add_command(config_repo)
 cli.add_command(fetch_worksheets)
 cli.add_command(commit)
 cli.add_command(push_worksheets)
+cli.add_command(diff)
 
 if __name__ == "__main__":
     cli()

@@ -11,7 +11,7 @@
 
 # Snowflake Git
 
-🆕 Now supported in Snowflake, see the [official documentation](https://docs.snowflake.com/en/developer-guide/git/git-overview).
+🆕 Git now supported in Snowflake, see the [official documentation](https://docs.snowflake.com/en/developer-guide/git/git-overview).
 
 # Worksheet Versioning
 
@@ -25,7 +25,7 @@ The following workflow is advised :
 2. Test, update and validate on Snowsight 
 3. [End session] Update local branch with modified Snowsight worksheets
 
-## Installation
+## Install
 
 Entry points are accessible through a CLI once the package is installed. 
 To install it, please follow the following steps :
@@ -37,7 +37,13 @@ $ pyenv activate sf
 
 # [Mandatory: Pip install]
 $ pip install -U pip
-$ pip install sf_git==1.3.1
+$ pip install sf_git==1.4.0
+
+# [Check your installation]
+$ sfgit --version
+# [Should result in:]
+# sfgit, version 1.4.0
+
 
 # [Check your installation]
 $ sfgit --help
@@ -58,7 +64,7 @@ $ sfgit --help
 
 Commands have been created to **import/export (respectively fetch/push) snowsight worksheets to/from local**.
 
-## Git configuration
+## Configure your git
 
 > **Warning**
 > A git repository is necessary to manage worksheets. You can either use an existing one
@@ -82,8 +88,10 @@ Then, set a location to save your worksheets within this git repository:
 $ sfgit config --save-dir <path_to_worksheets_persistency_directory>
 ```
 
-## Authentication
-Currently, two authentication modes are supported i.e. credentials (PWD) and single sign-on (SSO).
+## Authenticate
+Currently, only authentication mode supported is the credentials (PWD) mode.
+
+> :warning: The single sign-on (SSO) will be fixed.
 
 Commands requiring Snowsight authentication all have options to provide at command time. 
 If you don't want to manually input them everytime, you can set them at Python/Virtual environement level with :
@@ -123,11 +131,21 @@ Unfortunately, the _region_ is not always the same in the _SHOW REGIONS_ ouput. 
 For example, eastus2 for Azure should actually be east-us-2.
 
 
-## Usage
+## Use
 
 **Import user worksheet locally** :
 ```bash
-$ sfgit fetch --username tdambrin --account-id my_account.west-europe.azure --auth-mode SSO
+$ sfgit fetch --auth-mode PWD
+```
+
+**Import user worksheet locally (using command time args)** :
+```bash
+$ sfgit fetch --username tdambrin --account-id my_account.west-europe.azure -p mysecret -am PWD
+```
+
+**See what changed for only your worksheets in the git** :
+```bash
+$ sfgit diff
 ```
 
 **Commit you worksheets** (or through git commands for more flexibility) :
@@ -135,9 +153,9 @@ $ sfgit fetch --username tdambrin --account-id my_account.west-europe.azure --au
 $ sfgit commit --branch master -m "Initial worksheet commit"
 ```
 
-**Export user worksheets to Snowsight** :
+**Export user worksheets to Snowsight** 
 ```bash
-$ sfgit push --auth-mode SSO --branch master
+$ sfgit push --auth-mode PWD --branch master
 ```
 
 ## Be creative

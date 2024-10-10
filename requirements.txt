@@ -7,3 +7,4 @@ click==7.1.2
 deepdiff
 gitpython>=3.1
 requests
+urllib3

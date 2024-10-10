@@ -9,6 +9,13 @@ def cli():
     pass
 
 
+@click.group()
+@click.version_option(sf_git.__version__)
+@click.pass_context
+def cli(ctx):
+    pass
+
+
 @click.command("init")
 @click.option(
     "--path",
@@ -39,6 +46,7 @@ def init(path: str, mkdir: bool):
     "--get",
     help="If provided, print the current value for following config option",
     type=str,
+
 )
 @click.option(
     "--git-repo",

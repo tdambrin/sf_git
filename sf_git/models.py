@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Any
 
 
 class AuthenticationMode(Enum):
@@ -28,15 +29,25 @@ class AuthenticationContext:
     account: str = ""
     account_name: str = ""
     account_url: str = ""
+    auth_code_challenge: str = ""
+    auth_code_challenge_method: str = ""
+    auth_originator: str = ""
+    auth_redirect_uri: str = ""
+    auth_session_token: str = ""
     app_server_url: str = ""
     client_id: str = ""
+    cookies: Any = None
+    csrf: str = ""
+    login_name: str = ""
     main_app_url: str = ""
     master_token: str = ""
+    oauth_nonce: str = ""
     organization_id: str = ""
     region: str = ""
+    server_version: str = ""
     snowsight_token: dict = field(default_factory=dict)
-    login_name: str = ""
     username: str = ""
+    window_id: str = ""
 
 
 class SnowsightError(Enum):

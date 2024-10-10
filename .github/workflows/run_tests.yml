@@ -59,7 +59,7 @@ jobs:
           BRANCH_NAME="$(echo ${GITHUB_REF_NAME} | sed 's/\//_/g')"
           echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
       - name: Create badge
-        uses: schneegans/dynamic-badges-action@v1.6.0
+        uses: schneegans/dynamic-badges-action@v1.7.0
         with:
           auth: ${{ secrets.GIST_TOKEN }}
           gistID: e2c293d7db07bee70d2845387cb133ff

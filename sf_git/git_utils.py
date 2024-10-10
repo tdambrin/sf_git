@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import List, Type, Union, Dict, Optional
+import re
 
+import git
 from git.objects.blob import Blob
 from git.objects.tree import Tree
 from git.repo.base import Repo
@@ -67,3 +69,59 @@ def get_blobs_content(blobs: List[Blob]) -> Dict[str, bytes]:
         b.name: b.data_stream.read() for b in blobs if isinstance(b, Blob)
     }
     return contents
+
+
+def diff(
+    repo: git.Repo,
+    subdirectory: Union[str, Path] = None,
+    file_extensions: Union[str, List[str]] = None,
+) -> str:
+    """
+    Get git diff output with subdirectory and file extension filters
+
+    :param repo: git repository
+    :param subdirectory: only on files within this subdirectory
+    :param file_extensions: only match files with these extensions
+
+    :returns: str, git diff output
+    """
+    # Check input
+    if subdirectory and isinstance(subdirectory, str):
+        subdirectory = Path(subdirectory)
+    if file_extensions and isinstance(file_extensions, str):
+        file_extensions = [file_extensions]
+
+    # Get blobs
+    search_path = (
+        subdirectory
+        if subdirectory
+        else Path(repo.git.rev_parse("--show-toplevel"))
+    )
+    globs = []
+    if not file_extensions:
+        globs.extend(search_path.glob("**/*"))
+    else:
+        for extension in file_extensions:
+            globs.extend(list(search_path.glob(f"**/*.{extension}")))
+
+    # Get git diff output
+    if not globs:
+        return ""
+
+    diff_output = repo.git.diff(globs)
+
+    # Add coloring
+    diff_output = re.sub(
+        r"^(\++)(.*?)$",
+        "\033[32m\\1\\2\033[0m",
+        diff_output,
+        flags=re.MULTILINE,
+    )
+    diff_output = re.sub(
+        r"^(-+)(.*?)$",
+        "\033[31m\\1\\2\033[0m",
+        diff_output,
+        flags=re.MULTILINE,
+    )
+
+    return diff_output

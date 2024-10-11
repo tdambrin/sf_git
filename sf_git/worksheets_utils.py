@@ -127,11 +127,15 @@ def write_worksheet(
 ) -> Optional[WorksheetError]:
     """Write local worksheet to Snowsight worksheet."""
 
+    version = 1
     request_json_template = {
         "action": "saveDraft",
         "id": worksheet._id,
-        "projectId": worksheet._id,
+        "projectId": f"{worksheet._id}@{version}",
         "query": worksheet.content,
+        "version": version,
+        "modifiedTime": "2024-10-11T20:15:28.558Z",
+        "appSessionId": "9054529735682",
     }
 
     req_body = parse.urlencode(request_json_template)
@@ -146,8 +150,11 @@ def write_worksheet(
             "Content-Type": "application/x-www-form-urlencoded",
             "X-Snowflake-Context": snowflake_context,
             "Referer": auth_context.main_app_url,
+            "X-CSRF-Token": auth_context.csrf,
+            "X-Snowflake-Role": "ACCOUNTADMIN",
+            "X-Snowflake-Page-Source": "worksheet"
         },
-        cookies=auth_context.snowsight_token,
+        cookies=auth_context.cookies,
         timeout=90,
     )
 

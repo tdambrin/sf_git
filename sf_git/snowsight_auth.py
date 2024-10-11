@@ -183,6 +183,7 @@ def authenticate_to_snowsight(
             f"for account url {auth_context.account_url} "
             f"with oauth_nonce_cookie {auth_context.oauth_nonce}"
         )
+    auth_context.cookies = agg_cookies_from_responses(finalized_response)
     for cookie in finalized_response.cookies:
         if cookie.name.startswith("user"):
             auth_context.snowsight_token[cookie.name] = cookie.value

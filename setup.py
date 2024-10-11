@@ -13,7 +13,7 @@ with open("requirements.txt", "r") as f:
 
 setup(
     name="sf_git",
-    version="1.4.1",
+    version="1.4.2",
     setup_requires=["setuptools_scm"],
     author="Thomas Dambrin",
     author_email="thomas.dambrin@gmail.com",

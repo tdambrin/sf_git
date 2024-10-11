@@ -37,12 +37,12 @@ $ pyenv activate sf
 
 # [Mandatory: Pip install]
 $ pip install -U pip
-$ pip install sf_git==1.4.0
+$ pip install sf_git==1.4.1
 
 # [Check your installation]
 $ sfgit --version
 # [Should result in:]
-# sfgit, version 1.4.0
+# sfgit, version 1.4.1
 
 
 # [Check your installation]

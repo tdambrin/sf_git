@@ -44,7 +44,7 @@ def save_worksheets_to_cache(worksheets: List[Worksheet]):
             file_name = f"{ws_name}.{extension}"
             worksheet_metadata_file_name = f".{ws_name}_metadata.json"
 
-        with open(config.GLOBAL_CONFIG.worksheets_path / file_name, "w") as f:
+        with open(config.GLOBAL_CONFIG.worksheets_path / file_name, "w", encoding="utf-8") as f:
             f.write(ws.content)
         ws_metadata = {
             "name": ws.name,
@@ -57,6 +57,7 @@ def save_worksheets_to_cache(worksheets: List[Worksheet]):
             config.GLOBAL_CONFIG.worksheets_path
             / worksheet_metadata_file_name,
             "w",
+            encoding="utf-8",
         ) as f:
             f.write(json.dumps(ws_metadata))
     print("[Worksheets] Saved")
